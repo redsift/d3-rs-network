@@ -13,7 +13,7 @@ const DEFAULT_ASPECT = 0.5;
 const DEFAULT_MARGIN = 8;
 
 export default function chart(id) {
-  let classed = 'chart-venn', 
+  let classed = 'chart-network', 
       background = undefined,
       width = DEFAULT_SIZE,
       theme = 'light',

@@ -3,7 +3,7 @@ machine:
     version: 8.0.0
   environment: 
     S3_BUCKET: redsift-static
-    NAME: d3-rs-venn
+    NAME: d3-rs-network
 
 checkout: 
   pre:
