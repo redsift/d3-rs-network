@@ -127,9 +127,16 @@ export default function chart(id) {
           return "guidText";
         })
         .on("mouseover", function (d){
-          var nodeSelection = d3.select(this).style({visibility:visible});
-          nodeSelection.select("text").style({visibility:visible});                
+          console.log("mouseover, this is: ");console.log(this );
+          console.log("mouseover, d3.select(this) is: ");console.log(d3.select(this) );
+          d3.select(this)._groups[0][0].style.fill = "black";
         })
+        .on("mouseout", function (d){
+          console.log("mouseout, this is: ");console.log(this );
+          console.log("mouseout, d3.select(this) is: ");console.log(d3.select(this) );
+          d3.select(this)._groups[0][0].style.fill = "";
+        })
+        
         ;
 
       var link = nodeEnter.append("g")
