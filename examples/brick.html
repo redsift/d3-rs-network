@@ -10,18 +10,14 @@
 
     .nodes circle {
       stroke: #888;
-      stroke-width: 1.5px;
+      fill-opacity:  0.2;
+      stroke-width: 1.5px
     }
-
-    #elm{
-      height: 800px;
-    }
-
     .textNetwork{
       font-size: 10px
     }
     .ipText{
-      visibility: hidden;      
+      visibility: hidden;
       fill: red
     }
     .guidText{
@@ -29,7 +25,7 @@
       fill: #F4F
     }
     .macText{
-      visibility: hidden;      
+      visibility: visible;
       fill: #0044FF
     }
     .ipCircle{
@@ -87,7 +83,7 @@
           }
         },
         {
-          
+          instance: "instance-guid-2"        
         }
       ];
 
@@ -97,38 +93,68 @@
         "ldn-02-stg": { metadata: "something" }
       };
 
-      let GUID_TO_MAC = [
-        {"instance-guid-1": ["32:64:23:34"]}
-      ];
-
-      // MAC TO IP
-      let MAC_TO_IP = [
-        {"32:64:23:34": ["192.168.0.15", "192.168.0.16" ]}
-      ];
+      let GUID_TO_MAC = 
+        {"instance-guid-1": ["mac_32_64_23_34"]}
+      ;
+      let MAC_TO_GUID = 
+        {"mac_32_64_23_34": "instance-guid-1"}
+      ;
+      let MAC_TO_IP = 
+        {"mac_32_64_23_34": ["192.168.0.15", "192.168.0.16" ]}
+      ;
+      let IP_To_MAC = {
+        "ip_192_168_0_15" : "mac_32_64_23_34",
+        "ip_192_168_0_16" : "mac_32_64_23_34" 
+      }
+      ;
 
       let VIZ = {
         "nodes": [
-          {"id" : "mac_32_64_23_34", "type":"MAC"},
+          {"id" : "instance-guid_to"},
+          {"id": "instance-guid-1_from", "group": "instance-guid-1"},
+          {"id": "instance-guid-1"}
+        ],
+        "mac":[
+          {"id" : "mac_32_64_23_34", "type":"MAC"}
+        ],
+        "ip":[
           {"id": "ip_192_168_0_15", "type":"IP"},
           {"id": "ip_192_168_0_16", "type":"IP"},
           {"id": "ip_162_42_42_15", "type":"IP"},
-          {"id": "instance-guid-1", "group": "ldn-02-stg"},
-          {"id": "instance-guid-1_from", "group": "instance-guid-1"},
-          {"id": "ip_8_8_8_8", "group": "public-internet"},
-          {"id" : "instance-guid_to"}
+          {"id": "ip_8_8_8_8", "group": "public-internet"}
         ],
         "links": [
           {"source": "instance-guid-1_from", "target": "instance-guid_to", "value": 10.34, "epochBegin": 42 ,"typeCom":"transfer" },
+        ],
+        "ipLinks":[
           {"source": "ip_192_168_0_15", "target": "ip_162_42_42_15", "value": 2 ,"typeCom":"transfer" },
           {"source": "ip_192_168_0_16", "target": "ip_162_42_42_15", "value": 2 ,"typeCom":"transfer" },
           {"source": "mac_32_64_23_34", "target": "ip_192_168_0_15", "value": 15 ,"typeCom":"parent" },
           {"source": "mac_32_64_23_34", "target": "ip_192_168_0_16", "value": 15 ,"typeCom":"parent" }
-        ]
+        ],
+        "relationshipsMacToGuid":[MAC_TO_GUID],
+        "relationshipsGuidToMac":[GUID_TO_MAC],
+        "relationshipsMacToIp":[MAC_TO_IP]
       };
 
       function category(d) {
         // logic
         return GROUP[d.group].metadata;
+      }
+
+      function tryGetChildren(idObj){
+        if (idObj.includes("mac")){
+        return MAC_TO_IP[idObj];
+        } else if (idObj.includes("guid")){
+          return GUID_TO_MAC[idObj];          
+        }
+      }
+      function tryGetParent(idObj){
+        if (idObj.includes("mac")){
+        return MAC_TO_GUID[idObj];
+        } else if (idObj.includes("ip")){
+          return IP_To_MAC[idObj];          
+        }
       }
       
       var chart = d3_rs_network.html('blank');
