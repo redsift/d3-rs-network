@@ -25,7 +25,7 @@
       fill: #F4F
     }
     .macText{
-      visibility: visible;
+      visibility: hidden;
       fill: #0044FF
     }
     .ipCircle{
@@ -87,8 +87,6 @@
         }
       ];
 
-
-
       let GROUP = {
         "ldn-02-stg": { metadata: "something" }
       };
@@ -110,18 +108,18 @@
 
       let VIZ = {
         "nodes": [
-          {"id" : "instance-guid_to"},
-          {"id": "instance-guid-1_from", "group": "instance-guid-1"},
-          {"id": "instance-guid-1"}
+          {"id" : "instance-guid_to", "numChildren":0},
+          {"id": "instance-guid-1_from", "group": "instance-guid-1", "numChildren":0},
+          {"id": "instance-guid-1", "numChildren":1}
         ],
         "mac":[
-          {"id" : "mac_32_64_23_34", "type":"MAC"}
+          {"id" : "mac_32_64_23_34", "type":"MAC", "numChildren":2}
         ],
         "ip":[
-          {"id": "ip_192_168_0_15", "type":"IP"},
-          {"id": "ip_192_168_0_16", "type":"IP"},
-          {"id": "ip_162_42_42_15", "type":"IP"},
-          {"id": "ip_8_8_8_8", "group": "public-internet"}
+          {"id": "ip_192_168_0_15", "type":"IP", "numChildren":0},
+          {"id": "ip_192_168_0_16", "type":"IP", "numChildren":0},
+          {"id": "ip_162_42_42_15", "type":"IP", "numChildren":0},
+          {"id": "ip_8_8_8_8", "group": "public-internet", "numChildren":0}
         ],
         "links": [
           {"source": "instance-guid-1_from", "target": "instance-guid_to", "value": 10.34, "epochBegin": 42 ,"typeCom":"transfer" },
@@ -137,25 +135,6 @@
         "relationshipsMacToIp":[MAC_TO_IP]
       };
 
-      function category(d) {
-        // logic
-        return GROUP[d.group].metadata;
-      }
-
-      function tryGetChildren(idObj){
-        if (idObj.includes("mac")){
-        return MAC_TO_IP[idObj];
-        } else if (idObj.includes("guid")){
-          return GUID_TO_MAC[idObj];          
-        }
-      }
-      function tryGetParent(idObj){
-        if (idObj.includes("mac")){
-        return MAC_TO_GUID[idObj];
-        } else if (idObj.includes("ip")){
-          return IP_To_MAC[idObj];          
-        }
-      }
       
       var chart = d3_rs_network.html('blank');
       // modify chart
