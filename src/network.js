@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 
 import { select } from 'd3-selection';
-import { drag, forceSimulation, forceLink, forceManyBody, forceCenter } from 'd3-selection';
+import { drag, forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from 'd3-selection';
 import { event } from 'd3-selection';
 import { html as svg } from '@redsift/d3-rs-svg';
 import {
@@ -30,7 +30,11 @@ export default function chart(id) {
     style = undefined,
     scale = 1.0,
     category = null,
-    textDisplay = (d) => d.id;
+    textDisplay = (d) => d.id,
+    tryGetChildren = null,
+    tryGetParent = null,
+    tryGetIndexBrothers = null,
+    tryGetNumberOfBrothers = null;
 
   function _impl(context) {
     let selection = context.selection ? context.selection() : context,
@@ -226,7 +230,7 @@ export default function chart(id) {
         .force("link", forceLink().id(function (d) { return d.id; }))
         .force("charge", forceManyBody().strength(-200))
         .force("center", forceCenter(sw / 2, sh / 2))
-        .force('collision', d3.forceCollide().radius(function (d) {
+        .force('collision', forceCollide().radius(function (d) {
           console.log("collision d"); console.log(d);
           return d.radius
         }))
