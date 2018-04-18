@@ -116,17 +116,8 @@ export default function chart(id) {
         .data(nodes)
         .enter().append("circle")
         .attr("id", d => d.id)
-        .attr("class", function (d) {
-          if (d.id.includes("ip")) { return "ipCircle" }
-          else if (d.id.includes("mac")) { return "macCircle" }
-          return "guidCircle";
-        })
-        .attr("r", function (d) {
-          console_writer.writeThing("d: "); console_writer.writeThing(d);
-          if (d.id.includes("guid")) { return d.numChildren * 5 + 20 }
-          else if (d.id.includes("mac")) { return d * numChildren * 3 + 5 }
-          return 2;
-        })
+        .attr("class",  "guidCircle" )
+        .attr("r", d => d.numChildren * 5 + 20)
         .on("click", function (d) {
           console_writer.writeThing("clicked on d: "); console_writer.writeThing(d);
           console_writer.writeThing("tryGetChildren: "); console_writer.writeThing(tryGetChildren(d.id));
@@ -144,16 +135,8 @@ export default function chart(id) {
         .enter().append("circle")
         .attr("fill", 0)
         .attr("id", d => d.id)
-        .attr("class", function (d) {
-          if (d.id.includes("ip")) { return "ipCircle" }
-          else if (d.id.includes("mac")) { return "macCircle" }
-          return "guidCircle";
-        })
-        .attr("r", function (d) {
-          if (d.id.includes("guid")) { return d.numChildren * 5 + 20 }
-          else if (d.id.includes("mac")) { return d.numChildren * 3 + 5 }
-          return 2;
-        })
+        .attr("class",  "macCircle")
+        .attr("r", d => d.numChildren * 3 + 5 )
         .on("click", function (d) {
           console_writer.writeThing("clicked on d: "); console_writer.writeThing(d);
           console_writer.writeThing("tryGetChildren: "); console_writer.writeThing(tryGetChildren(d.id));
@@ -171,16 +154,8 @@ export default function chart(id) {
         .enter().append("circle")
         .attr("fill", 0)
         .attr("id", d => d.id)
-        .attr("class", function (d) {
-          if (d.id.includes("ip")) { return "ipCircle" }
-          else if (d.id.includes("mac")) { return "macCircle" }
-          return "guidCircle";
-        })
-        .attr("r", function (d) {
-          if (d.id.includes("guid")) { return d.numChildren * 5 + 20 }
-          else if (d.id.includes("mac")) { return d.numChildren * 3 + 5 }
-          return 2;
-        })
+        .attr("class", "ipCircle" )
+        .attr("r",  2 )
         .attr("cx", function (d) {
           return Math.random() * 300;
         })
@@ -284,13 +259,21 @@ export default function chart(id) {
         macCircle
           .attr("cx", function (d) {
             var idParent = tryGetParent(d.id);
-            // console_writer.writeThing("macCircle idParent: "+idParent);
             return select("#" + idParent)._groups[0][0].cx.animVal.value;
           })
           .attr("cy", function (d) {
             var idParent = tryGetParent(d.id);
-            // console_writer.writeThing("macCircle idParent: "+idParent);
             return select("#" + idParent)._groups[0][0].cy.animVal.value;
+          })
+
+          ipCircle
+          .attr("cx", function (d) {
+            var idParent = tryGetParent(d.id);
+            return typeof idParent != 'undefined' ?  select("#" + idParent)._groups[0][0].cx.animVal.value : select("#" + d.id)._groups[0][0].cx.animVal.value;
+          })
+          .attr("cy", function (d) {
+            var idParent = tryGetParent(d.id);
+            return typeof idParent != 'undefined' ?  select("#" + idParent)._groups[0][0].cy.animVal.value : select("#" + d.id)._groups[0][0].cy.animVal.value;
           })
 
         textNode
@@ -325,7 +308,7 @@ export default function chart(id) {
       }
     });
 
-    
+
   }
 
   _impl.self = function () { return 'g' + (id ? '#' + id : '.' + classed); }

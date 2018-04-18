@@ -9,6 +9,7 @@
         } else if (idObj.includes("guid")){
           return GUID_TO_MAC[idObj];          
         }
+        return null;
       }
 
     export  function tryGetParent(idObj){
@@ -16,5 +17,6 @@
         return MAC_TO_GUID[idObj];
         } else if (idObj.includes("ip")){
           return IP_To_MAC[idObj];          
-        }
+        } 
+        return null;
       }
