@@ -10,9 +10,6 @@ import {
   display,
 } from '@redsift/d3-rs-theme';
 import { link } from 'fs';
-import { tryGetChildren, tryGetParent } from './data-handling'
-
-console.log("Hello world");
 
 // >npm install --save d3-forceSimulation
 
@@ -89,21 +86,15 @@ export default function chart(id) {
 
       let nodeEnter = select(".chart-network");
       let nodes = [],
-        mac = [],
-        ip = [],
-        relationshipsGuidToMac = [],
-        relationshipsMacToIp = [],
-        links = [];
+        links = [],
+        owns = [];
 
-      nodes = data.nodes, mac = data.mac, ip = data.ip, relationshipsGuidToMac = data.relationshipsGuidToMac,
-        relationshipsMacToIp = data.relationshipsMacToIp, links = data.links;
+      nodes = data.nodes, links = data.links, owns = data.owns;
 
       console.log("nodeEnter: "); console.log(nodeEnter);
       console.log("nodes: "); console.log(nodes);
-      console.log("mac: "); console.log(mac);
-      console.log("ip: "); console.log(ip);
-      console.log("relationshipsMacToIp: "); console.log(relationshipsMacToIp);
       console.log("links: "); console.log(links);
+      console.log("owns: "); console.log(owns);
 
       // test
       var ips = tryGetChildren("mac_32_64_23_34");
@@ -116,8 +107,8 @@ export default function chart(id) {
         .data(nodes)
         .enter().append("circle")
         .attr("id", d => d.id)
-        .attr("class",  "guidCircle" )
-        .attr("r", d => d.numChildren * 5 + 20)
+        .attr("class", "guidCircle")
+        .attr("r", d => 20)
         .on("click", function (d) {
           console.log("clicked on d: "); console.log(d);
           console.log("tryGetChildren: "); console.log(tryGetChildren(d.id));
@@ -125,49 +116,49 @@ export default function chart(id) {
         .call(drag()
           .on("start", dragstarted)
           .on("drag", dragged)
-          .on("end", dragended));
+          .on("end", dragended))
+        ;
 
       // mac circle
-      let macCircle = nodeEnter.append("g")
-        .attr("class", "nodes")
-        .selectAll("circle")
-        .data(mac)
-        .enter().append("circle")
-        .attr("fill", 0)
-        .attr("id", d => d.id)
-        .attr("class",  "macCircle")
-        .attr("r", d => d.numChildren * 3 + 5 )
-        .on("click", function (d) {
-          console.log("clicked on d: "); console.log(d);
-          console.log("tryGetChildren: "); console.log(tryGetChildren(d.id));
-        })
-        .on("tick", function (d) {
-          console.log("tick from mac");
-        })
-        ;
-
+      // let macCircle = nodeEnter.append("g")
+      //   .attr("class", "nodes")
+      //   .selectAll("circle")
+      //   .data(mac)
+      //   .enter().append("circle")
+      //   .attr("fill", 0)
+      //   .attr("id", d => d.id)
+      //   .attr("class",  "macCircle")
+      //   .attr("r", d => d.numChildren * 3 + 5 )
+      //   .on("click", function (d) {
+      //     console.log("clicked on d: "); console.log(d);
+      //     console.log("tryGetChildren: "); console.log(tryGetChildren(d.id));
+      //   })
+      //   .on("tick", function (d) {
+      //     console.log("tick from mac");
+      //   })
+      //   ;
       // ip circle
-      let ipCircle = nodeEnter.append("g")
-        .attr("class", "nodes")
-        .selectAll("circle")
-        .data(ip)
-        .enter().append("circle")
-        .attr("fill", 0)
-        .attr("id", d => d.id)
-        .attr("class", "ipCircle" )
-        .attr("r",  2 )
-        .attr("cx", function (d) {
-          return Math.random() * 300;
-        })
-        .attr("cy", function (d) {
-          return Math.random() * 300;
-        })
-        .on("click", function (d) {
-          console.log("clicked on d.id: "); console.log(d.id);
-          console.log("tryGetParent circle: ");
-          console.log(tryGetParent(d.id));
-        })
-        ;
+      // let ipCircle = nodeEnter.append("g")
+      //   .attr("class", "nodes")
+      //   .selectAll("circle")
+      //   .data(ip)
+      //   .enter().append("circle")
+      //   .attr("fill", 0)
+      //   .attr("id", d => d.id)
+      //   .attr("class", "ipCircle" )
+      //   .attr("r",  2 )
+      //   .attr("cx", function (d) {
+      //     return Math.random() * 300;
+      //   })
+      //   .attr("cy", function (d) {
+      //     return Math.random() * 300;
+      //   })
+      //   .on("click", function (d) {
+      //     console.log("clicked on d.id: "); console.log(d.id);
+      //     console.log("tryGetParent circle: ");
+      //     console.log(tryGetParent(d.id));
+      //   })
+      //   ;
 
       let textNode = nodeEnter
         .append("g")
@@ -183,13 +174,9 @@ export default function chart(id) {
           return "guidText";
         })
         .on("mouseover", function (d) {
-          console.log("mouseover, this is: "); console.log(this);
-          console.log("mouseover, select(this) is: "); console.log(select(this));
           select(this)._groups[0][0].style.fill = "black";
         })
         .on("mouseout", function (d) {
-          // console.log("mouseout, this is: ");console.log(this );
-          // console.log("mouseout, select(this) is: ");console.log(select(this) );
           select(this)._groups[0][0].style.fill = "";
         })
         .call(drag()
@@ -198,30 +185,32 @@ export default function chart(id) {
           .on("end", dragended))
         ;
 
-      let textMac = nodeEnter
-        .append("g")
-        .selectAll("text")
-        .data(mac)
-        .enter().append("text")
-        .text(function (d) { return d.id; })
-        .attr("id", d => d.id)
-        .attr("class", "textNetwork")
-        .attr("class", function (d) {
-          if (d.id.includes("ip")) { return "ipText" }
-          else if (d.id.includes("mac")) { return "macText" }
-          return "guidText";
-        })
-        .on("mouseover", function (d) {
-          select(this)._groups[0][0].style.fill = "black";
-        })
-        .on("mouseout", function (d) {
-          select(this)._groups[0][0].style.fill = "";
-        })
-        .call(drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended))
-        ;
+
+
+      // let textMac = nodeEnter
+      //   .append("g")
+      //   .selectAll("text")
+      //   .data(mac)
+      //   .enter().append("text")
+      //   .text(function (d) { return d.id; })
+      //   .attr("id", d => d.id)
+      //   .attr("class", "textNetwork")
+      //   .attr("class", function (d) {
+      //     if (d.id.includes("ip")) { return "ipText" }
+      //     else if (d.id.includes("mac")) { return "macText" }
+      //     return "guidText";
+      //   })
+      //   .on("mouseover", function (d) {
+      //     select(this)._groups[0][0].style.fill = "black";
+      //   })
+      //   .on("mouseout", function (d) {
+      //     select(this)._groups[0][0].style.fill = "";
+      //   })
+      //   .call(drag()
+      //     .on("start", dragstarted)
+      //     .on("drag", dragged)
+      //     .on("end", dragended))
+      //   ;
 
 
       var link = nodeEnter.append("g")
@@ -247,7 +236,7 @@ export default function chart(id) {
           .attr("x2", function (d) { return d.target.x; })
           .attr("y2", function (d) { return d.target.y; })
 
-        ;
+          ;
 
         nodeCircle
           .attr("cx", function (d) {
@@ -258,48 +247,44 @@ export default function chart(id) {
               Math.max(this.r.animVal.value, Math.min(sh - this.r.animVal.value, d.y));
           })
 
-        macCircle
-          .attr("cx", function (d) {
-            var idParent = tryGetParent(d.id);
-            return typeof idParent != 'undefined' ?  select("#" + idParent)._groups[0][0].cx.animVal.value : select("#" + d.id)._groups[0][0].cx.animVal.value;
-          })
-          .attr("cy", function (d) {
-            var idParent = tryGetParent(d.id);
-            return typeof idParent != 'undefined' ?  select("#" + idParent)._groups[0][0].cy.animVal.value : select("#" + d.id)._groups[0][0].cy.animVal.value;
-          })
+        // macCircle
+        //   .attr("cx", function (d) {
+        //     var idParent = tryGetParent(d.id);
+        //     return typeof idParent != 'undefined' ? select("#" + idParent)._groups[0][0].cx.animVal.value : select("#" + d.id)._groups[0][0].cx.animVal.value;
+        //   })
+        //   .attr("cy", function (d) {
+        //     var idParent = tryGetParent(d.id);
+        //     return typeof idParent != 'undefined' ? select("#" + idParent)._groups[0][0].cy.animVal.value : select("#" + d.id)._groups[0][0].cy.animVal.value;
+        //   })
 
-          ipCircle
-          .attr("cx", function (d) {
-            var idParent = tryGetParent(d.id);
-            // angle offset depends of the number of children, and the position as a children
-            var r = 10;
-            var angleInDegrees = Math.random() * 180;
-            var angleInRadians = angleInDegrees * (Math.PI / 180);
-            var cosTheta = Math.cos(angleInRadians);
-            var sinTheta = Math.sin(angleInRadians);
+        // ipCircle
+        //   .attr("cx", function (d) {
+        //     var idParent = tryGetParent(d.id);
+        //     // angle offset depends of the number of children, and the position as a children
+        //     var r = 10;
+        //     var angleInDegrees = Math.random() * 180;
+        //     var angleInRadians = angleInDegrees * (Math.PI / 180);
+        //     var cosTheta = Math.cos(angleInRadians);
+        //     var sinTheta = Math.sin(angleInRadians);
+        //     // var possible_cx = cosTheta * select("#" + idParent)._groups[0][0].cx.animVal.value - 
+        //     //   sinTheta * select("#" + idParent)._groups[0][0].cy.animVal.value ;
+        //     return typeof idParent != 'undefined' ?
+        //       select("#" + idParent)._groups[0][0].cx.animVal.value + r * cosTheta
+        //       //possible_cx
+        //       : select("#" + d.id)._groups[0][0].cx.animVal.value;
+        //   })
+        //   .attr("cy", function (d) {
+        //     var idParent = tryGetParent(d.id);
+        //     var r = 10;
+        //     var angleInDegrees = Math.random() * 360;
+        //     var angleInRadians = angleInDegrees * (2 * Math.PI / 360);
+        //     var cosTheta = Math.cos(angleInRadians);
+        //     var sinTheta = Math.sin(angleInRadians);
 
-            // var possible_cx = cosTheta * select("#" + idParent)._groups[0][0].cx.animVal.value - 
-            //   sinTheta * select("#" + idParent)._groups[0][0].cy.animVal.value ;
-
-
-            return typeof idParent != 'undefined' ?  
-            select("#" + idParent)._groups[0][0].cx.animVal.value + r*cosTheta 
-            //possible_cx
-            : select("#" + d.id)._groups[0][0].cx.animVal.value;
-          })
-          .attr("cy", function (d) {
-            var idParent = tryGetParent(d.id);
-            
-            var r = 10;
-            var angleInDegrees = Math.random() * 360;
-            var angleInRadians = angleInDegrees * (2*Math.PI / 360);
-            var cosTheta = Math.cos(angleInRadians);
-            var sinTheta = Math.sin(angleInRadians);
-
-            return typeof idParent != 'undefined' ?  
-            select("#" + idParent)._groups[0][0].cy.animVal.value + r * sinTheta 
-            : select("#" + d.id)._groups[0][0].cy.animVal.value;
-          })
+        //     return typeof idParent != 'undefined' ?
+        //       select("#" + idParent)._groups[0][0].cy.animVal.value + r * sinTheta
+        //       : select("#" + d.id)._groups[0][0].cy.animVal.value;
+        //   });
 
         textNode
           .attr("x", function (d) {
@@ -307,11 +292,11 @@ export default function chart(id) {
           })
           .attr("y", function (d) { return select("#" + d.id)._groups[0][0].cy.animVal.value; })
 
-        textMac
-          .attr("x", function (d) {
-            return select("#" + d.id)._groups[0][0].cx.animVal.value;
-          })
-          .attr("y", function (d) { return select("#" + d.id)._groups[0][0].cy.animVal.value; })
+        // textMac
+        //   .attr("x", function (d) {
+        //     return select("#" + d.id)._groups[0][0].cx.animVal.value;
+        //   })
+        //   .attr("y", function (d) { return select("#" + d.id)._groups[0][0].cy.animVal.value; })
 
       }
 
@@ -375,9 +360,18 @@ export default function chart(id) {
   _impl.style = function (value) {
     return arguments.length ? (style = value, _impl) : style;
   };
+
   _impl.category = function (value) {
     return arguments.length ? (category = value, _impl) : category;
   };
-  
+
+  _impl.tryGetChildren = function (value) {
+    return arguments.length ? (tryGetChildren = value, _impl) : tryGetChildren;
+  };
+
+  _impl.tryGetParent = function (value) {
+    return arguments.length ? (tryGetParent = value, _impl) : tryGetParent;
+  };
+
   return _impl;
 }
