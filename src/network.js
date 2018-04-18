@@ -287,16 +287,16 @@ export default function chart(id) {
 
         link
           .attr("x1", function (d) {
-            return d3.select("#"+d.source.id)._groups[0][0].cx.animVal.value;
+            return select("#"+d.source.id)._groups[0][0].cx.animVal.value;
           })
           .attr("y1", function (d) { 
-            return d3.select("#"+d.source.id)._groups[0][0].cy.animVal.value;
+            return select("#"+d.source.id)._groups[0][0].cy.animVal.value;
           })
           .attr("x2", function (d) { 
-            return d3.select("#"+d.target.id)._groups[0][0].cx.animVal.value;
+            return select("#"+d.target.id)._groups[0][0].cx.animVal.value;
           })
           .attr("y2", function (d) { 
-            return d3.select("#"+d.target.id)._groups[0][0].cy.animVal.value;
+            return select("#"+d.target.id)._groups[0][0].cy.animVal.value;
           })
         ;
 
