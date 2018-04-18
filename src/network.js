@@ -9,7 +9,6 @@ import {
   presentation10,
   display,
 } from '@redsift/d3-rs-theme';
-import { link } from 'fs';
 
 // >npm install --save d3-forceSimulation
 
