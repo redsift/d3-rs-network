@@ -29,7 +29,8 @@ export default function chart(id) {
     margin = DEFAULT_MARGIN,
     style = undefined,
     scale = 1.0,
-    category = null;
+    category = null,
+    textDisplay = (d) => d.id;
 
   function _impl(context) {
     let selection = context.selection ? context.selection() : context,
@@ -166,7 +167,7 @@ export default function chart(id) {
         .selectAll("text")
         .data(nodes)
         .enter().append("text")
-        .text(function (d) { return d.id; })
+        .text( textDisplay )
         .attr("id", d => d.id)
         .attr("class", "textNetwork")
         .attr("class", (d) => d.strata)
@@ -430,5 +431,10 @@ export default function chart(id) {
     return arguments.length ? (tryGetNumberOfBrothers = value, _impl) : tryGetNumberOfBrothers;
   };
 
+  _impl.textDisplay = function (value) {
+    return arguments.length ? (textDisplay = value, _impl) : textDisplay;
+  };
+
   return _impl;
+
 }

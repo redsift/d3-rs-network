@@ -112,7 +112,7 @@
         {id: "parent1", strata: 1},
         {id: "child1", strata: 2},
         {id: "child2", strata: 2},
-        {id: "child3", strata: 2},
+        {id: "child3", strata: 2, friendlyName: "napoleon"},
         {id: "child4", strata: 2},
         { id: "grandparent2", strata: 0 }
         // ...
@@ -200,10 +200,20 @@
         return brothers.length;
       }
 
+      function textDisplay(d){
+        if (d.friendlyName){
+          return d.friendlyName;
+        }
+        return d.id;
+      }
+
       var chart = d3_rs_network.html('blank').category(category)
       .tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
       .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
+      .textDisplay(textDisplay)
       ;
+
+
 
       // modify chart
       d3.select('#elm').datum(VIZ).call(chart);
