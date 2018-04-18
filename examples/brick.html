@@ -111,16 +111,20 @@
         { id: "grandparent1", strata: 0 },
         {id: "parent1", strata: 1},
         {id: "child1", strata: 2},
+        {id: "child2", strata: 2},
+        {id: "child3", strata: 2},
         { id: "grandparent2", strata: 0 }
         // ...
       ],
       "links": [
-        { source: "grandparent1", target: "grandparent2", value: 10.34, color: 'red' }
+        { source: "grandparent1", target: "grandparent2", value: 10.34, color: 'red' },
+        { source: "child2", target: "child3", value: 10.34, color: 'red' }
         // ...
       ],
       "owns": [
         { parent: "grandparent1", child: "parent1" },
         { parent: "parent1", child: "child1" },
+        { parent: "parent1", child: "child2" },
         // ...
       ]
       };
@@ -164,7 +168,7 @@
         var arrayChildren = [];
         VIZ.owns.forEach(element => {
           if (element.parent == idObj)
-            arrayChildren.add(element.child);
+            arrayChildren.push(element.child);
         });
         return arrayChildren;
       }
@@ -173,15 +177,32 @@
         var parent = null;
         VIZ.owns.forEach(element => {
           if (element.child == idObj)
-            parent = elemen.parent;
+            parent = element.parent;
         });
         return parent;
       }
 
+      // Naive, but useful function to order to objects within the bubbles of the tree
+      function tryGetIndexBrothers(idObj){
+        var potentialFather = tryGetParent(idObj);
+        var brothers = tryGetChildren(potentialFather);
+        for (var i = 0; i < brothers.length; i++){
+          if (brothers[i] == idObj)
+            return i;
+        }
+        return null;
+      }
+      function tryGetNumberOfBrothers(idObj){
+        var potentialFather = tryGetParent(idObj);
+        var brothers = tryGetChildren(potentialFather);
+        return brothers.length;
+      }
+
       var chart = d3_rs_network.html('blank').category(category)
       .tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
+      .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
       ;
-      
+
       // modify chart
       d3.select('#elm').datum(VIZ).call(chart);
 

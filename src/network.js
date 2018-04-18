@@ -16,6 +16,9 @@ import { link } from 'fs';
 const DEFAULT_SIZE = 400;
 const DEFAULT_ASPECT = 0.5;
 const DEFAULT_MARGIN = 8;
+const BASE_SIZE_GRANDFATHER_NODE = 50;
+const BASE_SIZE_FATHER_NODE = 30;
+const BASE_SIZE_CHILD_NODE = 5;
 
 export default function chart(id) {
   let classed = 'chart-network',
@@ -107,8 +110,16 @@ export default function chart(id) {
         .data(nodes)
         .enter().append("circle")
         .attr("id", d => d.id)
-        .attr("class", "guidCircle")
-        .attr("r", d => 20)
+        .attr("class", d => d.strata)
+        .attr("r", function (d) {
+          if (d.strata == 0) {
+            return BASE_SIZE_GRANDFATHER_NODE;
+          } else if (d.strata == 1) {
+            return BASE_SIZE_FATHER_NODE;
+          } else if (d.strata == 2) {
+            return BASE_SIZE_CHILD_NODE;
+          }
+        })
         .on("click", function (d) {
           console.log("clicked on d: "); console.log(d);
           console.log("tryGetChildren: "); console.log(tryGetChildren(d.id));
@@ -168,11 +179,7 @@ export default function chart(id) {
         .text(function (d) { return d.id; })
         .attr("id", d => d.id)
         .attr("class", "textNetwork")
-        .attr("class", function (d) {
-          if (d.id.includes("ip")) { return "ipText" }
-          else if (d.id.includes("mac")) { return "macText" }
-          return "guidText";
-        })
+        .attr("class", (d) => d.strata)
         .on("mouseover", function (d) {
           select(this)._groups[0][0].style.fill = "black";
         })
@@ -230,22 +237,62 @@ export default function chart(id) {
         .links(data.links);
 
       function ticked() {
+
+        nodeCircle
+          .attr("cx", function (d) {
+            if (d.strata == .0) {
+              return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
+            } else if (d.strata == 1 || d.strata == 2) {
+              var idParent = tryGetParent(d.id);
+              if (idParent != null) {
+                var parentCenterX = select("#" + idParent)._groups[0][0].cx.animVal.value;
+                var r = 20 / d.strata;
+                var posIndex = tryGetIndexBrothers(d.id);
+                var numBrothers = tryGetNumberOfBrothers(d.id);
+                console.log("posIndex: "+ posIndex +"numBrothers: " + numBrothers);
+                var angleInDegrees = posIndex / numBrothers * 360;
+                console.log("angle in degrees: "+angleInDegrees);
+                var angleInRadians = angleInDegrees * (2 * Math.PI / 360);
+                var cosTheta = Math.cos(angleInRadians);
+                var sinTheta = Math.sin(angleInRadians);
+                var possible_cx = parentCenterX + cosTheta*r;
+                return possible_cx;
+              }
+              return select("#" + d.id)._groups[0][0].cx.animVal.value;
+            }
+          })
+          .attr("cy", function (d) {
+            if (d.strata == .0) {
+              return d.y = Math.max(this.r.animVal.value, Math.min(sh - this.r.animVal.value, d.y));
+            } else if (d.strata == 1 || d.strata == 2) {
+              var idParent = tryGetParent(d.id);
+
+              if (idParent != null) {
+                var parentCenterY = select("#" + idParent)._groups[0][0].cy.animVal.value;
+                var r = 10 / d.strata;
+                var posIndex = tryGetIndexBrothers(d.id);
+                var numBrothers = tryGetNumberOfBrothers(d.id);
+                console.log("posIndex: "+ posIndex +"numBrothers: " + numBrothers);
+                var angleInDegrees = posIndex / numBrothers * 360;
+                console.log("angle in degrees: "+angleInDegrees);
+                var angleInRadians = angleInDegrees * (2 * Math.PI / 360);
+                var cosTheta = Math.cos(angleInRadians);
+                var sinTheta = Math.sin(angleInRadians);
+                var possible_cy = parentCenterY + sinTheta*r;
+                return possible_cy;
+              }
+              return select("#" + d.id)._groups[0][0].cy.animVal.value;
+
+            }
+          })
+
         link
           .attr("x1", function (d) { return d.source.x; })
           .attr("y1", function (d) { return d.source.y; })
           .attr("x2", function (d) { return d.target.x; })
           .attr("y2", function (d) { return d.target.y; })
-
           ;
 
-        nodeCircle
-          .attr("cx", function (d) {
-            return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
-          })
-          .attr("cy", function (d) {
-            return d.y =
-              Math.max(this.r.animVal.value, Math.min(sh - this.r.animVal.value, d.y));
-          })
 
         // macCircle
         //   .attr("cx", function (d) {
@@ -371,6 +418,12 @@ export default function chart(id) {
 
   _impl.tryGetParent = function (value) {
     return arguments.length ? (tryGetParent = value, _impl) : tryGetParent;
+  };
+  _impl.tryGetIndexBrothers = function (value) {
+    return arguments.length ? (tryGetIndexBrothers = value, _impl) : tryGetIndexBrothers;
+  };
+  _impl.tryGetNumberOfBrothers = function (value) {
+    return arguments.length ? (tryGetNumberOfBrothers = value, _impl) : tryGetNumberOfBrothers;
   };
 
   return _impl;
