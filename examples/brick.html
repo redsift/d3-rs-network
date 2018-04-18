@@ -107,6 +107,21 @@
       ;
 
       let VIZ = {
+      "nodes": [
+        { id: "asdasd", strata: 0 }
+        ...
+      ],
+      "links": [
+        { source: "instance-guid-1_from", target: "instance-guid_to", value: 10.34, color: 'red' }
+        ...
+      ],
+      "owns": [
+        { parent: "asd", child: "dfgd" }
+        ...
+      ]
+      };
+
+      let VIZ = {
         "nodes": [
           {"id" : "instance-guid_to", "numChildren":0},
           {"id": "instance-guid-1_from", "group": "instance-guid-1", "numChildren":0},
@@ -134,9 +149,22 @@
         "relationshipsGuidToMac":[GUID_TO_MAC],
         "relationshipsMacToIp":[MAC_TO_IP]
       };
-
       
-      var chart = d3_rs_network.html('blank');
+      function category(d) {
+        // logic
+        return GROUP[d.group].metadata;
+      }
+      
+      function tryGetChildren(idObj){
+        if (idObj.includes("mac")){
+        return MAC_TO_IP[idObj];
+        } else if (idObj.includes("guid")){
+          return GUID_TO_MAC[idObj];          
+        }
+        return null;
+      }
+      
+      var chart = d3_rs_network.html('blank').category(category);
       // modify chart
       d3.select('#elm').datum(VIZ).call(chart);
 

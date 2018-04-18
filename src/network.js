@@ -1,4 +1,6 @@
-/* eslint-disable-line no-console 0 */
+/* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
+
 import { select } from 'd3-selection';
 import { drag, forceSimulation, forceLink, forceManyBody, forceCenter } from 'd3-selection';
 import { event } from 'd3-selection';
@@ -26,7 +28,8 @@ export default function chart(id) {
     height = null,
     margin = DEFAULT_MARGIN,
     style = undefined,
-    scale = 1.0;
+    scale = 1.0,
+    category = null;
 
   function _impl(context) {
     let selection = context.selection ? context.selection() : context,
@@ -372,5 +375,9 @@ export default function chart(id) {
   _impl.style = function (value) {
     return arguments.length ? (style = value, _impl) : style;
   };
+  _impl.category = function (value) {
+    return arguments.length ? (category = value, _impl) : category;
+  };
+  
   return _impl;
 }
