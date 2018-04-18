@@ -1,3 +1,4 @@
+/* eslint-disable-line no-console 0 */
 import { select } from 'd3-selection';
 import { drag, forceSimulation, forceLink, forceManyBody, forceCenter } from 'd3-selection';
 import { event } from 'd3-selection';
@@ -9,11 +10,7 @@ import {
 import { link } from 'fs';
 import { tryGetChildren, tryGetParent } from './data-handling'
 
-let console_writer = new Console_Writer(); // eslint-disable-line no-use-before-define
-function Console_Writer() {
-  this.writeThing = function (txt) { console.log(txt); };
-}
-console_writer.writeThing("Hello world");
+console.log("Hello world");
 
 // >npm install --save d3-forceSimulation
 
@@ -79,7 +76,7 @@ export default function chart(id) {
       }
 
       // -------- NETWORK CHART
-      console_writer.writeThing("my chart", w, h, data);
+      console.log("my chart", w, h, data);
       // ---- FORCE SETUP
       var simulation = forceSimulation()
         .force("link", forceLink().id(function (d) { return d.id; }))
@@ -98,16 +95,16 @@ export default function chart(id) {
       nodes = data.nodes, mac = data.mac, ip = data.ip, relationshipsGuidToMac = data.relationshipsGuidToMac,
         relationshipsMacToIp = data.relationshipsMacToIp, links = data.links;
 
-      console_writer.writeThing("nodeEnter: "); console_writer.writeThing(nodeEnter);
-      console_writer.writeThing("nodes: "); console_writer.writeThing(nodes);
-      console_writer.writeThing("mac: "); console_writer.writeThing(mac);
-      console_writer.writeThing("ip: "); console_writer.writeThing(ip);
-      console_writer.writeThing("relationshipsMacToIp: "); console_writer.writeThing(relationshipsMacToIp);
-      console_writer.writeThing("links: "); console_writer.writeThing(links);
+      console.log("nodeEnter: "); console.log(nodeEnter);
+      console.log("nodes: "); console.log(nodes);
+      console.log("mac: "); console.log(mac);
+      console.log("ip: "); console.log(ip);
+      console.log("relationshipsMacToIp: "); console.log(relationshipsMacToIp);
+      console.log("links: "); console.log(links);
 
       // test
       var ips = tryGetChildren("mac_32_64_23_34");
-      console_writer.writeThing("ips: "); console_writer.writeThing(ips);
+      console.log("ips: "); console.log(ips);
 
       // guid circle
       let nodeCircle = nodeEnter.append("g")
@@ -119,8 +116,8 @@ export default function chart(id) {
         .attr("class",  "guidCircle" )
         .attr("r", d => d.numChildren * 5 + 20)
         .on("click", function (d) {
-          console_writer.writeThing("clicked on d: "); console_writer.writeThing(d);
-          console_writer.writeThing("tryGetChildren: "); console_writer.writeThing(tryGetChildren(d.id));
+          console.log("clicked on d: "); console.log(d);
+          console.log("tryGetChildren: "); console.log(tryGetChildren(d.id));
         })
         .call(drag()
           .on("start", dragstarted)
@@ -138,11 +135,11 @@ export default function chart(id) {
         .attr("class",  "macCircle")
         .attr("r", d => d.numChildren * 3 + 5 )
         .on("click", function (d) {
-          console_writer.writeThing("clicked on d: "); console_writer.writeThing(d);
-          console_writer.writeThing("tryGetChildren: "); console_writer.writeThing(tryGetChildren(d.id));
+          console.log("clicked on d: "); console.log(d);
+          console.log("tryGetChildren: "); console.log(tryGetChildren(d.id));
         })
         .on("tick", function (d) {
-          console_writer.writeThing("tick from mac");
+          console.log("tick from mac");
         })
         ;
 
@@ -163,9 +160,9 @@ export default function chart(id) {
           return Math.random() * 300;
         })
         .on("click", function (d) {
-          console_writer.writeThing("clicked on d.id: "); console_writer.writeThing(d.id);
-          console_writer.writeThing("tryGetParent circle: ");
-          console_writer.writeThing(tryGetParent(d.id));
+          console.log("clicked on d.id: "); console.log(d.id);
+          console.log("tryGetParent circle: ");
+          console.log(tryGetParent(d.id));
         })
         ;
 
@@ -183,13 +180,13 @@ export default function chart(id) {
           return "guidText";
         })
         .on("mouseover", function (d) {
-          console_writer.writeThing("mouseover, this is: "); console_writer.writeThing(this);
-          console_writer.writeThing("mouseover, select(this) is: "); console_writer.writeThing(select(this));
+          console.log("mouseover, this is: "); console.log(this);
+          console.log("mouseover, select(this) is: "); console.log(select(this));
           select(this)._groups[0][0].style.fill = "black";
         })
         .on("mouseout", function (d) {
-          // console_writer.writeThing("mouseout, this is: ");console_writer.writeThing(this );
-          // console_writer.writeThing("mouseout, select(this) is: ");console_writer.writeThing(select(this) );
+          // console.log("mouseout, this is: ");console.log(this );
+          // console.log("mouseout, select(this) is: ");console.log(select(this) );
           select(this)._groups[0][0].style.fill = "";
         })
         .call(drag()
@@ -245,7 +242,9 @@ export default function chart(id) {
           .attr("x1", function (d) { return d.source.x; })
           .attr("y1", function (d) { return d.source.y; })
           .attr("x2", function (d) { return d.target.x; })
-          .attr("y2", function (d) { return d.target.y; });
+          .attr("y2", function (d) { return d.target.y; })
+
+        ;
 
         nodeCircle
           .attr("cx", function (d) {
@@ -259,21 +258,44 @@ export default function chart(id) {
         macCircle
           .attr("cx", function (d) {
             var idParent = tryGetParent(d.id);
-            return select("#" + idParent)._groups[0][0].cx.animVal.value;
-          })
-          .attr("cy", function (d) {
-            var idParent = tryGetParent(d.id);
-            return select("#" + idParent)._groups[0][0].cy.animVal.value;
-          })
-
-          ipCircle
-          .attr("cx", function (d) {
-            var idParent = tryGetParent(d.id);
             return typeof idParent != 'undefined' ?  select("#" + idParent)._groups[0][0].cx.animVal.value : select("#" + d.id)._groups[0][0].cx.animVal.value;
           })
           .attr("cy", function (d) {
             var idParent = tryGetParent(d.id);
             return typeof idParent != 'undefined' ?  select("#" + idParent)._groups[0][0].cy.animVal.value : select("#" + d.id)._groups[0][0].cy.animVal.value;
+          })
+
+          ipCircle
+          .attr("cx", function (d) {
+            var idParent = tryGetParent(d.id);
+            // angle offset depends of the number of children, and the position as a children
+            var r = 10;
+            var angleInDegrees = Math.random() * 180;
+            var angleInRadians = angleInDegrees * (Math.PI / 180);
+            var cosTheta = Math.cos(angleInRadians);
+            var sinTheta = Math.sin(angleInRadians);
+
+            // var possible_cx = cosTheta * select("#" + idParent)._groups[0][0].cx.animVal.value - 
+            //   sinTheta * select("#" + idParent)._groups[0][0].cy.animVal.value ;
+
+
+            return typeof idParent != 'undefined' ?  
+            select("#" + idParent)._groups[0][0].cx.animVal.value + r*cosTheta 
+            //possible_cx
+            : select("#" + d.id)._groups[0][0].cx.animVal.value;
+          })
+          .attr("cy", function (d) {
+            var idParent = tryGetParent(d.id);
+            
+            var r = 10;
+            var angleInDegrees = Math.random() * 360;
+            var angleInRadians = angleInDegrees * (2*Math.PI / 360);
+            var cosTheta = Math.cos(angleInRadians);
+            var sinTheta = Math.sin(angleInRadians);
+
+            return typeof idParent != 'undefined' ?  
+            select("#" + idParent)._groups[0][0].cy.animVal.value + r * sinTheta 
+            : select("#" + d.id)._groups[0][0].cy.animVal.value;
           })
 
         textNode
