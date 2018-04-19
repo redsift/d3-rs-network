@@ -87,24 +87,7 @@
         }
       ];
 
-      // let GROUP = {
-      //   "ldn-02-stg": { metadata: "something" }
-      // };
-      // let GUID_TO_MAC = 
-      //   {"instance-guid-1": ["mac_32_64_23_34"]}
-      // ;
-      // let MAC_TO_GUID = 
-      //   {"mac_32_64_23_34": "instance-guid-1"}
-      // ;
-      // let MAC_TO_IP = 
-      //   {"mac_32_64_23_34": ["192.168.0.15", "192.168.0.16" ]}
-      // ;
-      // let IP_To_MAC = {
-      //   "ip_192_168_0_15" : "mac_32_64_23_34",
-      //   "ip_192_168_0_16" : "mac_32_64_23_34" 
-      // }
-      // ;
-
+      // ---- Expected structure of input data
       // strata is 0 for grand-father, 1 for father, and 2 for child
       let VIZ = {
       "nodes": [
@@ -118,7 +101,7 @@
         // ...
       ],
       "links": [
-        { source: "grandparent1", target: "grandparent2", value: 10.34, color: 'red' },
+        { source: "grandparent1", target: "grandparent2", value: 40, color: 'red' },
         { source: "child1", target: "child3", value: 10.34, color: 'red' },
         { source: "child2", target: "child3", value: 10.34, color: 'red' }
         // ...
@@ -130,35 +113,6 @@
         // ...
       ]
       };
-
-      // let VIZ = {
-      //   "nodes": [
-      //     {"id" : "instance-guid_to", "numChildren":0},
-      //     {"id": "instance-guid-1_from", "group": "instance-guid-1", "numChildren":0},
-      //     {"id": "instance-guid-1", "numChildren":1}
-      //   ],
-      //   "mac":[
-      //     {"id" : "mac_32_64_23_34", "type":"MAC", "numChildren":2}
-      //   ],
-      //   "ip":[
-      //     {"id": "ip_192_168_0_15", "type":"IP", "numChildren":0},
-      //     {"id": "ip_192_168_0_16", "type":"IP", "numChildren":0},
-      //     {"id": "ip_162_42_42_15", "type":"IP", "numChildren":0},
-      //     {"id": "ip_8_8_8_8", "group": "public-internet", "numChildren":0}
-      //   ],
-      //   "links": [
-      //     {"source": "instance-guid-1_from", "target": "instance-guid_to", "value": 10.34, "epochBegin": 42 ,"typeCom":"transfer" },
-      //   ],
-      //   "ipLinks":[
-      //     {"source": "ip_192_168_0_15", "target": "ip_162_42_42_15", "value": 2 ,"typeCom":"transfer" },
-      //     {"source": "ip_192_168_0_16", "target": "ip_162_42_42_15", "value": 2 ,"typeCom":"transfer" },
-      //     {"source": "mac_32_64_23_34", "target": "ip_192_168_0_15", "value": 15 ,"typeCom":"parent" },
-      //     {"source": "mac_32_64_23_34", "target": "ip_192_168_0_16", "value": 15 ,"typeCom":"parent" }
-      //   ],
-      //   "relationshipsMacToGuid":[MAC_TO_GUID],
-      //   "relationshipsGuidToMac":[GUID_TO_MAC],
-      //   "relationshipsMacToIp":[MAC_TO_IP]
-      // };
       
       function category(d) {
         // logic
@@ -200,7 +154,6 @@
         return brothers.length;
       }
 
-
       function textDisplay(d){
         if (d.friendlyName){
           return d.friendlyName;
@@ -208,13 +161,11 @@
         return d.id;
       }
 
-      var chart = d3_rs_network.html('blank').category(category)
-      .tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
+      var chart = d3_rs_network.html('blank')
+      .category(category).tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
       .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
       .textDisplay(textDisplay)
       ;
-
-
 
       // modify chart
       d3.select('#elm').datum(VIZ).call(chart);

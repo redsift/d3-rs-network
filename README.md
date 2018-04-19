@@ -6,26 +6,44 @@
 
 `d3-rs-network` 
 
-## Example
-
-[View @redsift/d3-rs-network on Codepen](http://codepen.io/collection/DgkEpa/)
-
-### Line chart
-
-![Sample bars with a bottom orientation](https://bricks.redsift.cloud/reusable/d3-rs-network.svg?_datum=[1,200,3100,1000]&orientation=bottom)
-
-### Multiple series
-
-![Sample bars with a left orientation](https://bricks.redsift.cloud/reusable/d3-rs-network.svg?_datum=[[1,2,4],[0,1]])
-
 ## Usage
 
 ### Browser
 
     <script src="//static.redsift.io/reusable/d3-rs-network/latest/d3-rs-network.umd-es2015.min.js"></script>
     <script>
-        var chart = d3_rs_network.html();
-        d3.select('body').datum([ 1, 2, 3, 10, 100 ]).call(chart);
+      let VIZ = {
+      "nodes": [
+        { id: "grandparent1", strata: 0 },
+        {id: "parent1", strata: 1},
+        {id: "child1", strata: 2},
+        {id: "child2", strata: 2},
+        {id: "child3", strata: 2, friendlyName: "napoleon"},
+        {id: "child4", strata: 2},
+        { id: "grandparent2", strata: 0 }
+        // ...
+      ],
+      "links": [
+        { source: "grandparent1", target: "grandparent2", value: 40, color: 'red' },
+        { source: "child1", target: "child3", value: 10.34, color: 'red' },
+        { source: "child2", target: "child3", value: 10.34, color: 'red' }
+        // ...
+      ],
+      "owns": [
+        { parent: "grandparent1", child: "parent1" },
+        { parent: "parent1", child: "child1" },
+        { parent: "parent1", child: "child2" },
+        // ...
+      ]
+      };
+
+      var chart = d3_rs_network.html('blank').category(category)
+      .tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
+      .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
+      .textDisplay(textDisplay)
+      ;
+
+      d3.select('body').datum(VIZ).call(chart);
     </script>
 
 ### ES6
@@ -41,4 +59,10 @@
     ...
 
 ### TODO
-- https://codepen.io/rahulpowar/pen/aYeWOa?editors=1010
+Additional functions for customisation of the visualizations.
+    - Size of circles depending of given parameter as input
+    - Color of circles depending on strata
+    - Width of lines depending of given parameter as input
+    - Color of lines depending of given parameter as input
+    - Saturation of lines depending of given parameter as input
+    - Possibility to display different hierarchy of links 

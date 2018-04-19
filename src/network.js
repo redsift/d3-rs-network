@@ -124,47 +124,6 @@ export default function chart(id) {
           .on("end", dragended))
         ;
 
-      // mac circle
-      // let macCircle = nodeEnter.append("g")
-      //   .attr("class", "nodes")
-      //   .selectAll("circle")
-      //   .data(mac)
-      //   .enter().append("circle")
-      //   .attr("fill", 0)
-      //   .attr("id", d => d.id)
-      //   .attr("class",  "macCircle")
-      //   .attr("r", d => d.numChildren * 3 + 5 )
-      //   .on("click", function (d) {
-      //     console.log("clicked on d: "); console.log(d);
-      //     console.log("tryGetChildren: "); console.log(tryGetChildren(d.id));
-      //   })
-      //   .on("tick", function (d) {
-      //     console.log("tick from mac");
-      //   })
-      //   ;
-      // ip circle
-      // let ipCircle = nodeEnter.append("g")
-      //   .attr("class", "nodes")
-      //   .selectAll("circle")
-      //   .data(ip)
-      //   .enter().append("circle")
-      //   .attr("fill", 0)
-      //   .attr("id", d => d.id)
-      //   .attr("class", "ipCircle" )
-      //   .attr("r",  2 )
-      //   .attr("cx", function (d) {
-      //     return Math.random() * 300;
-      //   })
-      //   .attr("cy", function (d) {
-      //     return Math.random() * 300;
-      //   })
-      //   .on("click", function (d) {
-      //     console.log("clicked on d.id: "); console.log(d.id);
-      //     console.log("tryGetParent circle: ");
-      //     console.log(tryGetParent(d.id));
-      //   })
-      //   ;
-
       let textNode = nodeEnter
         .append("g")
         .selectAll("text")
@@ -185,33 +144,6 @@ export default function chart(id) {
           .on("drag", dragged)
           .on("end", dragended))
         ;
-
-
-
-      // let textMac = nodeEnter
-      //   .append("g")
-      //   .selectAll("text")
-      //   .data(mac)
-      //   .enter().append("text")
-      //   .text(function (d) { return d.id; })
-      //   .attr("id", d => d.id)
-      //   .attr("class", "textNetwork")
-      //   .attr("class", function (d) {
-      //     if (d.id.includes("ip")) { return "ipText" }
-      //     else if (d.id.includes("mac")) { return "macText" }
-      //     return "guidText";
-      //   })
-      //   .on("mouseover", function (d) {
-      //     select(this)._groups[0][0].style.fill = "black";
-      //   })
-      //   .on("mouseout", function (d) {
-      //     select(this)._groups[0][0].style.fill = "";
-      //   })
-      //   .call(drag()
-      //     .on("start", dragstarted)
-      //     .on("drag", dragged)
-      //     .on("end", dragended))
-      //   ;
 
 
       var link = nodeEnter.append("g")
@@ -303,56 +235,13 @@ export default function chart(id) {
           })
         ;
 
-        // macCircle
-        //   .attr("cx", function (d) {
-        //     var idParent = tryGetParent(d.id);
-        //     return typeof idParent != 'undefined' ? select("#" + idParent)._groups[0][0].cx.animVal.value : select("#" + d.id)._groups[0][0].cx.animVal.value;
-        //   })
-        //   .attr("cy", function (d) {
-        //     var idParent = tryGetParent(d.id);
-        //     return typeof idParent != 'undefined' ? select("#" + idParent)._groups[0][0].cy.animVal.value : select("#" + d.id)._groups[0][0].cy.animVal.value;
-        //   })
-
-        // ipCircle
-        //   .attr("cx", function (d) {
-        //     var idParent = tryGetParent(d.id);
-        //     // angle offset depends of the number of children, and the position as a children
-        //     var r = 10;
-        //     var angleInDegrees = Math.random() * 180;
-        //     var angleInRadians = angleInDegrees * (Math.PI / 180);
-        //     var cosTheta = Math.cos(angleInRadians);
-        //     var sinTheta = Math.sin(angleInRadians);
-        //     // var possible_cx = cosTheta * select("#" + idParent)._groups[0][0].cx.animVal.value - 
-        //     //   sinTheta * select("#" + idParent)._groups[0][0].cy.animVal.value ;
-        //     return typeof idParent != 'undefined' ?
-        //       select("#" + idParent)._groups[0][0].cx.animVal.value + r * cosTheta
-        //       //possible_cx
-        //       : select("#" + d.id)._groups[0][0].cx.animVal.value;
-        //   })
-        //   .attr("cy", function (d) {
-        //     var idParent = tryGetParent(d.id);
-        //     var r = 10;
-        //     var angleInDegrees = Math.random() * 360;
-        //     var angleInRadians = angleInDegrees * (2 * Math.PI / 360);
-        //     var cosTheta = Math.cos(angleInRadians);
-        //     var sinTheta = Math.sin(angleInRadians);
-
-        //     return typeof idParent != 'undefined' ?
-        //       select("#" + idParent)._groups[0][0].cy.animVal.value + r * sinTheta
-        //       : select("#" + d.id)._groups[0][0].cy.animVal.value;
-        //   });
-
         textNode
           .attr("x", function (d) {
             return select("#" + d.id)._groups[0][0].cx.animVal.value;
           })
           .attr("y", function (d) { return select("#" + d.id)._groups[0][0].cy.animVal.value; })
 
-        // textMac
-        //   .attr("x", function (d) {
-        //     return select("#" + d.id)._groups[0][0].cx.animVal.value;
-        //   })
-        //   .attr("y", function (d) { return select("#" + d.id)._groups[0][0].cy.animVal.value; })
+
 
       }
 
