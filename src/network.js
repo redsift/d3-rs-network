@@ -1,9 +1,18 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 
-import { select, selectAll } from 'd3-selection';
-import { drag, forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from 'd3-selection';
-import { event } from 'd3-selection';
+import {
+  event,
+  select
+} from 'd3-selection';
+import {drag} from 'd3-drag'
+import {
+  forceSimulation,
+  forceLink,
+  forceManyBody,
+  forceCenter,
+  forceCollide
+} from 'd3-force';
 import { html as svg } from '@redsift/d3-rs-svg';
 import {
   presentation10,
