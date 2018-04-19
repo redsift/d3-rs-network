@@ -96,7 +96,6 @@ export default function chart(id) {
       let nodes = [],
         links = [],
         owns = [];
-
       nodes = data.nodes, links = data.links, owns = data.owns;
 
       console.log("nodeEnter: "); console.log(nodeEnter);
@@ -174,7 +173,7 @@ export default function chart(id) {
       // ---- FORCE SETUP
       var simulation = forceSimulation(data.nodes)
         .force("link", forceLink().id(function (d) { return d.id; }))
-        .force("charge", forceManyBody().strength(-200))
+        .force("charge", forceManyBody().strength(-500))
         .force("center", forceCenter(sw / 2, sh / 2))
         .force('collision', forceCollide().radius(function (d) {
           return d.radius
@@ -182,7 +181,12 @@ export default function chart(id) {
       ;
 
       simulation.force("link")
-        .links(data.links);
+        .links(data.links)
+        .strength (function (d) {
+          // return Math.sqrt(d.value)
+          return .05;
+        })
+        ;
 
       simulation
         .nodes(data.nodes)
@@ -198,7 +202,7 @@ export default function chart(id) {
               var idParent = tryGetParent(d.id);
               if (idParent != null) {
                 var parentCenterX = select("#" + idParent)._groups[0][0].cx.animVal.value;
-                var r = 10 / d.strata;
+                var r = 20 / d.strata;
                 var posIndex = tryGetIndexBrothers(d.id);
                 var numBrothers = tryGetNumberOfBrothers(d.id);
                 var angleInDegrees = posIndex / numBrothers * 360;
@@ -218,7 +222,7 @@ export default function chart(id) {
               var idParent = tryGetParent(d.id);
               if (idParent != null) {
                 var parentCenterY = select("#" + idParent)._groups[0][0].cy.animVal.value;
-                var r = 10 / d.strata;
+                var r = 20 / d.strata;
                 var posIndex = tryGetIndexBrothers(d.id);
                 var numBrothers = tryGetNumberOfBrothers(d.id);
                 var angleInDegrees = posIndex / numBrothers * 360;
