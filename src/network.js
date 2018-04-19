@@ -5,14 +5,14 @@ import {
   event,
   select
 } from 'd3-selection';
-import {drag} from 'd3-drag'
 import {
+  drag, 
   forceSimulation,
   forceLink,
   forceManyBody,
   forceCenter,
   forceCollide
-} from 'd3-force';
+} from 'd3-selection';
 import { html as svg } from '@redsift/d3-rs-svg';
 import { presentation10, display} from '@redsift/d3-rs-theme';
 
@@ -91,7 +91,6 @@ export default function chart(id) {
 
       let snode = node.select(root.self());
       let elmS = snode.select(root.child());
-
       let g = elmS.select(_impl.self())
       if (g.empty()) {
         g = elmS.append('g').attr('class', classed).attr('id', id);

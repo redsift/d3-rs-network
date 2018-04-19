@@ -1,8 +1,8 @@
 <html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="https://static.redsift.io/reusable/ui-rs-core/latest/css/ui-rs-core.min.css">
-    <style>
 
+<head>
+  <link rel="stylesheet" type="text/css" href="https://static.redsift.io/reusable/ui-rs-core/latest/css/ui-rs-core.min.css">
+  <style>
     .links line {
       stroke: #222;
       stroke-opacity: 0.6;
@@ -10,101 +10,107 @@
 
     .nodes circle {
       stroke: #888;
-      fill-opacity:  0.2;
+      fill-opacity: 0.2;
       stroke-width: 1.5px
     }
-    .textNetwork{
+
+    .textNetwork {
       font-size: 10px
     }
-    .ipText{
+
+    .ipText {
       visibility: hidden;
       fill: red
     }
-    .guidText{
+
+    .guidText {
       visibility: visible;
       fill: #F4F
     }
-    .macText{
+
+    .macText {
       visibility: hidden;
       fill: #0044FF
     }
-    .ipCircle{
-      fill:peru
+
+    .ipCircle {
+      fill: peru
     }
-    .macCircle{
+
+    .macCircle {
       fill: paleturquoise
     }
+  </style>
+</head>
 
-    </style> 
-  </head>
-  <body>
-    <div id="elm"></div>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="/d3-rs-network.umd-es2015.min.js"></script>
-    <script>
+<body>
+  <div id="elm"></div>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="/d3-rs-network.umd-es2015.min.js"></script>
+  <script>
 
 
-      let DATA = [
-        {
-          instance: "instance-guid-1",
-          metrics: {
-            "ping": {
-              data: [
-                {
-                  mac: "32:64:23:34",
-                  attributes: {
-                    ifacename: "eth0",
-                    ipv4: [ "192.168.0.15" ],
-                    ipv6: []
-                  },
-                  epoch: 1523876698,
-                  series: [
-                    { "offset-ns": 1900899929, "from": "192.168.0.15", "to": "192.168.0.16", "value": { "ns": 5034000, "error": "lost-packet" }},
-                    { "offset-ns": 1900899929, "to": "8.8.8.8", "value-ns": 15034000 },
-                    { "offset-ns": 1900999929, "to": "192.168.0.16", "value-ns": 3034000 }
-                  ]
+    let DATA = [
+      {
+        instance: "instance-guid-1",
+        metrics: {
+          "ping": {
+            data: [
+              {
+                mac: "32:64:23:34",
+                attributes: {
+                  ifacename: "eth0",
+                  ipv4: ["192.168.0.15"],
+                  ipv6: []
                 },
-                {
-                  mac: "32:64:23:34",
-                  attributes: {
-                    ifacename: "eth1",
-                    ipv4: [ "192.168.0.16" ],
-                    ipv6: []
-                  },
-                  epoch: 1523876698,
-                  series: [
-                    { "offset-ns": 1900899929, "from": "192.168.0.16", "to": "192.168.0.15", "value-ns": 5034000, "error": "lost-packet" },
-                    { "offset-ns": 1900899929, "to": "8.8.8.8", "value-ns": 15034000 },
-                    { "offset-ns": 1900999929, "to": "192.168.0.16", "value-ns": 3034000 }
-                  ]
-                }
-              ]
-            }
+                epoch: 1523876698,
+                series: [
+                  { "offset-ns": 1900899929, "from": "192.168.0.15", "to": "192.168.0.16", "value": { "ns": 5034000, "error": "lost-packet" } },
+                  { "offset-ns": 1900899929, "to": "8.8.8.8", "value-ns": 15034000 },
+                  { "offset-ns": 1900999929, "to": "192.168.0.16", "value-ns": 3034000 }
+                ]
+              },
+              {
+                mac: "32:64:23:34",
+                attributes: {
+                  ifacename: "eth1",
+                  ipv4: ["192.168.0.16"],
+                  ipv6: []
+                },
+                epoch: 1523876698,
+                series: [
+                  { "offset-ns": 1900899929, "from": "192.168.0.16", "to": "192.168.0.15", "value-ns": 5034000, "error": "lost-packet" },
+                  { "offset-ns": 1900899929, "to": "8.8.8.8", "value-ns": 15034000 },
+                  { "offset-ns": 1900999929, "to": "192.168.0.16", "value-ns": 3034000 }
+                ]
+              }
+            ]
           }
-        },
-        {
-          instance: "instance-guid-2"        
         }
-      ];
+      },
+      {
+        instance: "instance-guid-2"
+      }
+    ];
 
-      // ---- Expected structure of input data
-      // strata is 0 for grand-father, 1 for father, and 2 for child
-      let VIZ = {
+    // ---- Expected structure of input data
+    // strata is 0 for grand-father, 1 for father, and 2 for child
+    let VIZ = {
       "nodes": [
         { id: "grandparent1", strata: 0 },
-        {id: "parent1", strata: 1},
-        {id: "parent2", strata: 1},
-        {id: "parent3", strata: 1},
-        {id: "child1", strata: 2},
-        {id: "child2", strata: 2},
-        {id: "child3", strata: 2, friendlyName: "napoleon"},
-        {id: "child4", strata: 2},
+        { id: "parent1", strata: 1 },
+        { id: "parent2", strata: 1 },
+        { id: "parent3", strata: 1 },
+        { id: "child1", strata: 2 },
+        { id: "child2", strata: 2 },
+        { id: "child3", strata: 2, friendlyName: "napoleon" },
+        { id: "child4", strata: 2 },
         { id: "grandparent2", strata: 0 }
         // ...
       ],
       "links": [
-        { source: "child1", target: "child3", value: 10.34  },
-        { source: "child2", target: "child3", value: 10.34  }
+        { source: "child1", target: "child3", value: 10.34 },
+        { source: "child2", target: "child3", value: 10.34 }
         // ...
       ],
       "owns": [
@@ -115,76 +121,108 @@
         { parent: "parent1", child: "child2" },
         // ...
       ]
-      };
-      
-      function category(d) {
-        // logic
-        return GROUP[d.group].metadata;
-      }
+    };
 
-      function tryGetChildren(idObj){
-        // Look into VIZ.owns and find all the cases where parent is idObj
-        var arrayChildren = [];
-        VIZ.owns.forEach(element => {
-          if (element.parent == idObj)
-            arrayChildren.push(element.child);
-        });
-        return arrayChildren;
-      }
+    let UNFRIENDLY_DATA = {
+      "nodes": [
+        { "id": "s0.alpha.redsift.tech", "strata": 0 },
+        { "id": "10.112.14.96", "strata": 2 },
+        { "id": "10.112.14.96", "strata": 2 },
+        { "id": "159.8.146.158", "strata": 2 },
+        { "id": "06:50:03:46:58:81", "strata": 1 },
+        { "id": "06:d8:c7:90:c9:7a", "strata": 1 },
+        { "id": "8.8.8.8", "strata": 0 },
+        { "id": "1.1.1.1", "strata": 0 },
+        { "id": "4.4.4.4", "strata": 0 }],
+      "links": [
+        { "source": "10.112.14.96", "target": "8.8.8.8", "value": 38 },
+        { "source": "10.112.14.96", "target": "1.1.1.1", "value": 38 },
+        { "source": "10.112.14.96", "target": "4.4.4.4", "value": 38 },
+        { "source": "10.112.14.96", "target": "4.4.4.4", "value": 38 },
+        { "source": "10.112.14.96", "target": "8.8.8.8", "value": 38 },
+        { "source": "10.112.14.96", "target": "1.1.1.1", "value": 38 },
+        { "source": "159.8.146.158", "target": "4.4.4.4", "value": 38 },
+        { "source": "159.8.146.158", "target": "8.8.8.8", "value": 1.35435744 },
+        { "source": "159.8.146.158", "target": "1.1.1.1", "value": 12.136901523809524 }],
+      "owns": [
+        { "parent": "06:50:03:46:58:81", "child": "10.112.14.96" },
+        { "parent": "06:d8:c7:90:c9:7a", "child": "10.112.14.96" },
+        { "parent": "06:d8:c7:90:c9:7a", "child": "159.8.146.158" },
+        { "parent": "s0.alpha.redsift.tech", "child": "06:50:03:46:58:81" },
+        { "parent": "s0.alpha.redsift.tech", "child": "06:d8:c7:90:c9:7a" }
+      ]
+    }
+      ;
 
-      function tryGetParent(idObj){
-        var parent = null;
-        VIZ.owns.forEach(element => {
-          if (element.child == idObj)
-            parent = element.parent;
-        });
-        return parent;
-      }
+    function category(d) {
+      // logic
+      return GROUP[d.group].metadata;
+    }
 
-      // Naive, but useful function to order to objects within the bubbles of the tree
-      function tryGetIndexBrothers(idObj){
-        var potentialFather = tryGetParent(idObj);
-        var brothers = tryGetChildren(potentialFather);
-        for (var i = 0; i < brothers.length; i++){
-          if (brothers[i] == idObj)
-            return i;
-        }
+    function tryGetChildren(idObj) {
+      // Look into VIZ.owns and find all the cases where parent is idObj
+      var arrayChildren = [];
+      VIZ.owns.forEach(element => {
+        if (element.parent == idObj)
+          arrayChildren.push(element.child);
+      });
+      return arrayChildren;
+    }
+
+    function tryGetParent(idObj) {
+      var parent = null;
+      VIZ.owns.forEach(element => {
+        if (element.child == idObj)
+          parent = element.parent;
+      });
+      return parent;
+    }
+
+    // Naive, but useful function to order to objects within the bubbles of the tree
+    function tryGetIndexBrothers(idObj) {
+      var potentialFather = tryGetParent(idObj);
+      var brothers = tryGetChildren(potentialFather);
+      for (var i = 0; i < brothers.length; i++) {
+        if (brothers[i] == idObj)
+          return i;
+      }
+      return null;
+    }
+    function tryGetNumberOfBrothers(idObj) {
+      var potentialFather = tryGetParent(idObj);
+      var brothers = tryGetChildren(potentialFather);
+      return brothers.length;
+    }
+
+    function textDisplay(d) {
+      if (d.friendlyName) {
+        return d.friendlyName;
+      }
+      return d.id;
+    }
+
+    function sizeCircle(d) {
+      if (tryGetChildren(d.id).length > 0) {
+        return 40 * tryGetChildren(d.id).length;
+      } else {
         return null;
       }
-      function tryGetNumberOfBrothers(idObj){
-        var potentialFather = tryGetParent(idObj);
-        var brothers = tryGetChildren(potentialFather);
-        return brothers.length;
-      }
+    }
 
-      function textDisplay(d){
-        if (d.friendlyName){
-          return d.friendlyName;
-        }
-        return d.id;
-      }
+    function linkWidthParameter(d) {
 
-      function sizeCircle(d){
-        if (tryGetChildren(d.id).length>0){
-          return 40 * tryGetChildren(d.id).length;
-        } else {
-          return null;
-        }
-      }
+    }
 
-      function linkWidthParameter(d){
-
-      }
-
-      var chart = d3_rs_network.html('blank')
+    var chart = d3_rs_network.html('blank')
       .category(category).tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
       .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
       .textDisplay(textDisplay).linkWidthParameter(linkWidthParameter)
       ;
 
-      // modify chart
-      d3.select('#elm').datum(VIZ).call(chart);
+    // modify chart
+    d3.select('#elm').datum(VIZ).call(chart);
 
-    </script>
-  </body>
+  </script>
+</body>
+
 </html>
