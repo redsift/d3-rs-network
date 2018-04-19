@@ -104,7 +104,7 @@
         { id: "child1", strata: 2 },
         { id: "child2", strata: 2 },
         { id: "child3", strata: 2, friendlyName: "napoleon" },
-        { id: "child4", strata: 2 },
+        { id: "chi.ld4", strata: 2 },
         { id: "grandparent2", strata: 0 }
         // ...
       ],
@@ -152,7 +152,7 @@
         { "parent": "s0.alpha.redsift.tech", "child": "06:d8:c7:90:c9:7a" }
       ]
     }
-      ;
+    ;
 
     function category(d) {
       // logic
@@ -198,7 +198,7 @@
       if (d.friendlyName) {
         return d.friendlyName;
       }
-      return d.id;
+      return transformIDtoDOMcriteria(d);
     }
 
     function sizeCircle(d) {
@@ -213,10 +213,18 @@
 
     }
 
+    // We expect the data to be given in the following way: 10:6:32:64 which isn't compliant to set it up as a dom node, so we have to transform it
+    function transformIDtoDOMcriteria(d){
+      var transformedIP = null;
+      transformedIP = d.id.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
+      return transformedIP;
+    }
+
+
     var chart = d3_rs_network.html('blank')
       .category(category).tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
       .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
-      .textDisplay(textDisplay).linkWidthParameter(linkWidthParameter)
+      .textDisplay(textDisplay).linkWidthParameter(linkWidthParameter).transformIDtoDOMcriteria(transformIDtoDOMcriteria)
       ;
 
     // modify chart

@@ -36,6 +36,7 @@ export default function chart(id) {
     scale = 1.0,
     category = null,
     textDisplay = (d) => d.id,
+    transformIDtoDOMcriteria = (d) => d.id,
     linkWidthParameter = (d) => Math.sqrt(d.value),
     tryGetChildren = null,
     tryGetParent = null,
@@ -48,7 +49,10 @@ export default function chart(id) {
 
     return res;
   }
-
+  function addTextForIDtextNode(d){
+    var modifiedID = transformIDtoDOMcriteria(d);
+    return "text"+modifiedID;
+  }
 
   function _impl(context) {
     let selection = context.selection ? context.selection() : context,
@@ -121,7 +125,7 @@ export default function chart(id) {
         .selectAll("circle")
         .data(nodes)
         .enter().append("circle")
-        .attr("id", d => d.id)
+        .attr("id", transformIDtoDOMcriteria)
         .attr("class", d => d.strata)
         .attr("fill", function(d){
           if (d.strata == 0) {
@@ -157,7 +161,7 @@ export default function chart(id) {
         .data(nodes)
         .enter().append("text")
         .text( textDisplay )
-        .attr("id", d => "text"+d.id)
+        .attr("id", addTextForIDtextNode)
         .attr("class", "textNetwork")
         .attr("class", (d) => d.strata)
         .on("mouseover", function (d) {
@@ -261,16 +265,20 @@ export default function chart(id) {
         ;
 
         textNode
+        .transition()
+        .duration(10)
           .attr("x", function (d) {
-            var circleValue = select("#" + d.id)._groups[0][0].cx.animVal.value;
-            var circleWidth = select("#" + d.id)._groups[0][0].r.animVal.value;
+            var transformedID = transformIDtoDOMcriteria(d);
+            var circleValue = select("#" + transformedID)._groups[0][0].cx.animVal.value;
+            var circleWidth = select("#" + transformedID)._groups[0][0].r.animVal.value;
             var txt = (d.friendlyName) ? (d.friendlyName ) : d.id;
-            var txtLength = Number(select("#text"+d.id)._groups[0][0].textLength.baseVal.valueAsString);
+            var txtLength = Number(select("#text"+transformedID)._groups[0][0].textLength.baseVal.valueAsString);
             var newX = ( circleValue + txtLength >= sw )? ( circleValue-txtLength ) : circleValue;
             return newX;
           })
           .attr("y", function (d) { 
-            return select("#" + d.id)._groups[0][0].cy.animVal.value; 
+            var transformedID = transformIDtoDOMcriteria(d);            
+            return select("#" +transformedID)._groups[0][0].cy.animVal.value; 
           })
 
       }
@@ -355,6 +363,10 @@ export default function chart(id) {
 
   _impl.textDisplay = function (value) {
     return arguments.length ? (textDisplay = value, _impl) : textDisplay;
+  };
+
+  _impl.transformIDtoDOMcriteria = function (value) {
+    return arguments.length ? (transformIDtoDOMcriteria = value, _impl) : transformIDtoDOMcriteria;
   };
 
   _impl.linkWidthParameter = function (value) {
