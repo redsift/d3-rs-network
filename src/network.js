@@ -38,6 +38,38 @@ export default function chart(id) {
     return "text"+d.id;
   }
 
+  function setWidthLinkBasedOnParameter(parameter,data){
+    var arrNormalizedParameter = [];
+    for (var i =0; i < data.links.length; i++){
+      var link = data.links[i];
+      (link.hasOwnProperty(parameter)) ? arrNormalizedParameter.push(link[parameter]) : null;
+    }
+    // Normalize
+    var ratio = Math.max(...arrNormalizedParameter) / 100;
+    arrNormalizedParameter = arrNormalizedParameter.map(v => Math.round(v / ratio) / 100);
+    // Refeed that in the data
+    for ( var i = 0; i <data.links.length; i++ ){
+      data.links[i].normalizedParam = arrNormalizedParameter[i];
+    }
+  }
+
+  // TODO: Kind of the same as the function above, but for size of circle 
+  function setNodeSizeBasedOnParameter(parameter, data){}
+
+  function setSizeNodePerOffsprings(data){
+    var nodes = data.nodes;
+    for (var i = 0; i < nodes.length; i++){
+      var directChildren = tryGetChildren(nodes[i].id);
+      var grandChildren = [];
+      for (var j = 0; j < directChildren.length; j++){
+        grandChildren = grandChildren.concat(tryGetChildren(directChildren[j]));
+      }
+      console.log("directChildren: "); console.log(directChildren);
+      console.log("grandChildren: "); console.log(grandChildren);
+    }
+  }
+
+
   function _impl(context) {
     let selection = context.selection ? context.selection() : context,
       transition = (context.selection !== undefined);
@@ -53,6 +85,14 @@ export default function chart(id) {
       //let sh = height || Math.round(width * DEFAULT_ASPECT);4
       let sw = 800;
       let sh = 600;
+
+      // data loaded, but needs to be formatted for visualization
+      setWidthLinkBasedOnParameter("value", data);
+      console.log("post normalisation for links");
+      console.log(data);
+
+      setSizeNodePerOffsprings(data);
+      console.log("data again: "); console.log(data);
 
       // SVG element
       let sid = null;
