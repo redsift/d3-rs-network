@@ -36,7 +36,7 @@ export default function chart(id) {
     scale = 1.0,
     category = null,
     textDisplay = (d) => d.id,
-    transformIDtoDOMcriteria = (d) => d.id,
+    transformIDtoDOMcriteria = null,
     linkWidthParameter = (d) => Math.sqrt(d.value),
     tryGetChildren = null,
     tryGetParent = null,
@@ -50,7 +50,7 @@ export default function chart(id) {
     return res;
   }
   function addTextForIDtextNode(d){
-    var modifiedID = transformIDtoDOMcriteria(d);
+    var modifiedID = transformIDtoDOMcriteria(d.id);
     return "text"+modifiedID;
   }
 
@@ -125,7 +125,7 @@ export default function chart(id) {
         .selectAll("circle")
         .data(nodes)
         .enter().append("circle")
-        .attr("id", transformIDtoDOMcriteria)
+        .attr("id", d=>  transformIDtoDOMcriteria(d.id))
         .attr("class", d => d.strata)
         .attr("fill", function(d){
           if (d.strata == 0) {
@@ -182,14 +182,14 @@ export default function chart(id) {
         .data(links)
         .enter().append("line")
         .attr("stroke-width", linkWidthParameter )
-        .attr("idSource", d => d.source)
-        .attr("idTarget", d => d.target)
+        .attr("idSource", d=> transformIDtoDOMcriteria( d.source) )
+        .attr("idTarget", d=> transformIDtoDOMcriteria(d.target) )
         ;
 
       // ---- FORCE SETUP
       var simulation = forceSimulation(data.nodes)
         .force("link", forceLink().id(function (d) { return d.id; }))
-        .force("charge", forceManyBody().strength(-200))
+        .force("charge", forceManyBody().strength(-600))
         .force("center", forceCenter(sw / 2, sh / 2))
         .force('collision', forceCollide().radius(function (d) {
           return d.radius
@@ -251,16 +251,16 @@ export default function chart(id) {
 
         link
           .attr("x1", function (d) {
-            return select("#"+d.source.id)._groups[0][0].cx.animVal.value;
+            return select("#"+transformIDtoDOMcriteria(d.source.id))._groups[0][0].cx.animVal.value;
           })
           .attr("y1", function (d) { 
-            return select("#"+d.source.id)._groups[0][0].cy.animVal.value;
+            return select("#"+transformIDtoDOMcriteria(d.source.id))._groups[0][0].cy.animVal.value;
           })
           .attr("x2", function (d) { 
-            return select("#"+d.target.id)._groups[0][0].cx.animVal.value;
+            return select("#"+transformIDtoDOMcriteria(d.target.id))._groups[0][0].cx.animVal.value;
           })
           .attr("y2", function (d) { 
-            return select("#"+d.target.id)._groups[0][0].cy.animVal.value;
+            return select("#"+transformIDtoDOMcriteria(d.target.id))._groups[0][0].cy.animVal.value;
           })
         ;
 
@@ -268,7 +268,7 @@ export default function chart(id) {
         .transition()
         .duration(10)
           .attr("x", function (d) {
-            var transformedID = transformIDtoDOMcriteria(d);
+            var transformedID = transformIDtoDOMcriteria(d.id);
             var circleValue = select("#" + transformedID)._groups[0][0].cx.animVal.value;
             var circleWidth = select("#" + transformedID)._groups[0][0].r.animVal.value;
             var txt = (d.friendlyName) ? (d.friendlyName ) : d.id;
@@ -277,7 +277,7 @@ export default function chart(id) {
             return newX;
           })
           .attr("y", function (d) { 
-            var transformedID = transformIDtoDOMcriteria(d);            
+            var transformedID = transformIDtoDOMcriteria(d.id);            
             return select("#" +transformedID)._groups[0][0].cy.animVal.value; 
           })
 

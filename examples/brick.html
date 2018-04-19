@@ -127,7 +127,6 @@
       "nodes": [
         { "id": "s0.alpha.redsift.tech", "strata": 0 },
         { "id": "10.112.14.96", "strata": 2 },
-        { "id": "10.112.14.96", "strata": 2 },
         { "id": "159.8.146.158", "strata": 2 },
         { "id": "06:50:03:46:58:81", "strata": 1 },
         { "id": "06:d8:c7:90:c9:7a", "strata": 1 },
@@ -198,7 +197,7 @@
       if (d.friendlyName) {
         return d.friendlyName;
       }
-      return transformIDtoDOMcriteria(d);
+      return transformIDtoDOMcriteria(d.id);
     }
 
     function sizeCircle(d) {
@@ -214,9 +213,11 @@
     }
 
     // We expect the data to be given in the following way: 10:6:32:64 which isn't compliant to set it up as a dom node, so we have to transform it
-    function transformIDtoDOMcriteria(d){
+    function transformIDtoDOMcriteria(idObj){
       var transformedIP = null;
-      transformedIP = d.id.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
+      var strId = ''+idObj;
+      transformedIP = strId.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
+      transformedIP = "_"+transformedIP;
       return transformedIP;
     }
 
@@ -228,7 +229,7 @@
       ;
 
     // modify chart
-    d3.select('#elm').datum(VIZ).call(chart);
+    d3.select('#elm').datum(UNFRIENDLY_DATA).call(chart);
 
   </script>
 </body>
