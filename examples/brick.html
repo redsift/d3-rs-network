@@ -93,6 +93,8 @@
       "nodes": [
         { id: "grandparent1", strata: 0 },
         {id: "parent1", strata: 1},
+        {id: "parent2", strata: 1},
+        {id: "parent3", strata: 1},
         {id: "child1", strata: 2},
         {id: "child2", strata: 2},
         {id: "child3", strata: 2, friendlyName: "napoleon"},
@@ -107,12 +109,13 @@
       ],
       "owns": [
         { parent: "grandparent1", child: "parent1" },
+        { parent: "grandparent1", child: "parent2" },
+        { parent: "grandparent1", child: "parent3" },
         { parent: "parent1", child: "child1" },
         { parent: "parent1", child: "child2" },
         // ...
       ]
       };
-      
       
       function category(d) {
         // logic
@@ -161,10 +164,22 @@
         return d.id;
       }
 
+      function sizeCircle(d){
+        if (tryGetChildren(d.id).length>0){
+          return 40 * tryGetChildren(d.id).length;
+        } else {
+          return null;
+        }
+      }
+
+      function linkWidthParameter(d){
+
+      }
+
       var chart = d3_rs_network.html('blank')
       .category(category).tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
       .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
-      .textDisplay(textDisplay)
+      .textDisplay(textDisplay).linkWidthParameter(linkWidthParameter)
       ;
 
       // modify chart

@@ -2,13 +2,13 @@
 /* eslint-disable no-unused-vars */
 
 import { select, selectAll } from 'd3-selection';
+import { pack } from 'd3-hierarchy'
+// This is how we should call it, but for reason it bugs
+//       var pack = pack().size([sw - 4, sh - 4]);
 import { drag, forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from 'd3-selection';
 import { event } from 'd3-selection';
 import { html as svg } from '@redsift/d3-rs-svg';
-import {
-  presentation10,
-  display,
-} from '@redsift/d3-rs-theme';
+import { presentation10, display} from '@redsift/d3-rs-theme';
 
 // >npm install --save d3-forceSimulation
 
@@ -16,7 +16,7 @@ const DEFAULT_SIZE = 400;
 const DEFAULT_ASPECT = 0.5;
 const DEFAULT_MARGIN = 8;
 const BASE_SIZE_GRANDFATHER_NODE = 50;
-const BASE_SIZE_FATHER_NODE = 30;
+const BASE_SIZE_FATHER_NODE = 20;
 const BASE_SIZE_CHILD_NODE = 5;
 
 export default function chart(id) {
@@ -30,10 +30,19 @@ export default function chart(id) {
     scale = 1.0,
     category = null,
     textDisplay = (d) => d.id,
+    linkWidthParameter = (d) => Math.sqrt(d.value),
     tryGetChildren = null,
     tryGetParent = null,
     tryGetIndexBrothers = null,
     tryGetNumberOfBrothers = null;
+
+  // TODO Function to create tree structure out of the other one created 
+  function createTreeStructure(dataNodeLink){
+    var res = {};
+
+    return res;
+  }
+
 
   function _impl(context) {
     let selection = context.selection ? context.selection() : context,
@@ -81,6 +90,10 @@ export default function chart(id) {
       if (g.empty()) {
         g = elmS.append('g').attr('class', classed).attr('id', id);
       }
+
+      // -------- PACKING FORCE TODO FIX BUG, we should be able to call it without d3.pack
+      console.log("sw - 4: "+(sw - 4)+", sh - 4: "+(sh - 4));
+      // var pack = pack().size([sw - 4, sh - 4]);
 
       // -------- NETWORK CHART
       console.log("my chart", w, h, data);
@@ -159,7 +172,7 @@ export default function chart(id) {
         .selectAll("line")
         .data(links)
         .enter().append("line")
-        .attr("stroke-width", function (d, i) { return Math.sqrt(d.value); })
+        .attr("stroke-width", linkWidthParameter )
         .attr("idSource", d => d.source)
         .attr("idTarget", d => d.target)
         ;
@@ -170,7 +183,6 @@ export default function chart(id) {
         .force("charge", forceManyBody().strength(-200))
         .force("center", forceCenter(sw / 2, sh / 2))
         .force('collision', forceCollide().radius(function (d) {
-          console.log("collision d"); console.log(d);
           return d.radius
         }))
       ;
@@ -339,6 +351,11 @@ export default function chart(id) {
   _impl.textDisplay = function (value) {
     return arguments.length ? (textDisplay = value, _impl) : textDisplay;
   };
+
+  _impl.linkWidthParameter = function (value) {
+    return arguments.length ? (linkWidthParameter = value, _impl) : linkWidthParameter;
+  };
+
 
   return _impl;
 
