@@ -1,12 +1,18 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 
-import { select, selectAll } from 'd3-selection';
-import { pack } from 'd3-hierarchy'
-// This is how we should call it, but for reason it bugs
-//       var pack = pack().size([sw - 4, sh - 4]);
-import { drag, forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from 'd3-selection';
-import { event } from 'd3-selection';
+import {
+  event,
+  select
+} from 'd3-selection';
+import {drag} from 'd3-drag'
+import {
+  forceSimulation,
+  forceLink,
+  forceManyBody,
+  forceCenter,
+  forceCollide
+} from 'd3-force';
 import { html as svg } from '@redsift/d3-rs-svg';
 import { presentation10, display} from '@redsift/d3-rs-theme';
 
