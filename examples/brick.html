@@ -132,7 +132,8 @@
         { "id": "06:d8:c7:90:c9:7a", "strata": 1 },
         { "id": "8.8.8.8", "strata": 0 },
         { "id": "1.1.1.1", "strata": 0 },
-        { "id": "4.4.4.4", "strata": 0 }],
+        { "id": "4.4.4.4", "strata": 0 }
+      ],
       "links": [
         { "source": "10.112.14.96", "target": "8.8.8.8", "value": 38 },
         { "source": "10.112.14.96", "target": "1.1.1.1", "value": 38 },
@@ -142,7 +143,8 @@
         { "source": "10.112.14.96", "target": "1.1.1.1", "value": 38 },
         { "source": "159.8.146.158", "target": "4.4.4.4", "value": 38 },
         { "source": "159.8.146.158", "target": "8.8.8.8", "value": 1.35435744 },
-        { "source": "159.8.146.158", "target": "1.1.1.1", "value": 12.136901523809524 }],
+        { "source": "159.8.146.158", "target": "1.1.1.1", "value": 12.136901523809524 }
+      ],
       "owns": [
         { "parent": "06:50:03:46:58:81", "child": "10.112.14.96" },
         { "parent": "06:d8:c7:90:c9:7a", "child": "10.112.14.96" },
@@ -161,7 +163,7 @@
     function tryGetChildren(idObj) {
       // Look into VIZ.owns and find all the cases where parent is idObj
       var arrayChildren = [];
-      VIZ.owns.forEach(element => {
+      UNFRIENDLY_DATA.owns.forEach(element => {
         if (element.parent == idObj)
           arrayChildren.push(element.child);
       });
@@ -170,7 +172,7 @@
 
     function tryGetParent(idObj) {
       var parent = null;
-      VIZ.owns.forEach(element => {
+      UNFRIENDLY_DATA.owns.forEach(element => {
         if (element.child == idObj)
           parent = element.parent;
       });

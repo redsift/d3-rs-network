@@ -174,7 +174,7 @@ export default function chart(id) {
       // ---- FORCE SETUP
       var simulation = forceSimulation(data.nodes)
         .force("link", forceLink().id(function (d) { return d.id; }))
-        .force("charge", forceManyBody().strength(-600))
+        .force("charge", forceManyBody().strength(-200))
         .force("center", forceCenter(sw / 2, sh / 2))
         .force('collision', forceCollide().radius(function (d) {
           return d.radius
@@ -182,7 +182,7 @@ export default function chart(id) {
       ;
 
       simulation.force("link")
-      .links(data.links);
+        .links(data.links);
 
       simulation
         .nodes(data.nodes)
@@ -198,7 +198,7 @@ export default function chart(id) {
               var idParent = tryGetParent(d.id);
               if (idParent != null) {
                 var parentCenterX = select("#" + idParent)._groups[0][0].cx.animVal.value;
-                var r = 20 / d.strata;
+                var r = 10 / d.strata;
                 var posIndex = tryGetIndexBrothers(d.id);
                 var numBrothers = tryGetNumberOfBrothers(d.id);
                 var angleInDegrees = posIndex / numBrothers * 360;
@@ -216,7 +216,6 @@ export default function chart(id) {
               return d.y = Math.max(this.r.animVal.value, Math.min(sh - this.r.animVal.value, d.y));
             } else if (d.strata == 1 || d.strata == 2) {
               var idParent = tryGetParent(d.id);
-
               if (idParent != null) {
                 var parentCenterY = select("#" + idParent)._groups[0][0].cy.animVal.value;
                 var r = 10 / d.strata;
@@ -250,7 +249,7 @@ export default function chart(id) {
         ;
 
         textNode
-        .transition().duration(10)
+          .transition().duration(10)
           .attr("x", function (d) {
             var circleValue = select("#" + d.id)._groups[0][0].cx.animVal.value;
             var circleWidth = select("#" + d.id)._groups[0][0].r.animVal.value;
@@ -262,6 +261,7 @@ export default function chart(id) {
           .attr("y", function (d) { 
             return select("#" +d.id)._groups[0][0].cy.animVal.value; 
           })
+        ;
 
       }
 
