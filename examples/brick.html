@@ -98,13 +98,13 @@
     let VIZ = {
       "nodes": [
         { id: "grandparent1", strata: 0 },
-        { id: "parent1", strata: 1 },
+        { id: "}par#___.ent1", strata: 1 },
         { id: "parent2", strata: 1 },
         { id: "parent3", strata: 1 },
         { id: "child1", strata: 2 },
         { id: "child2", strata: 2 },
         { id: "child3", strata: 2, friendlyName: "napoleon" },
-        { id: "chi.ld4", strata: 2 },
+        { id: "ch.#&il+d4", strata: 2 },
         { id: "grandparent2", strata: 0 }
         // ...
       ],
@@ -114,11 +114,11 @@
         // ...
       ],
       "owns": [
-        { parent: "grandparent1", child: "parent1" },
+        { parent: "grandparent1", child: "}par#___.ent1" },
         { parent: "grandparent1", child: "parent2" },
         { parent: "grandparent1", child: "parent3" },
-        { parent: "parent1", child: "child1" },
-        { parent: "parent1", child: "child2" },
+        { parent: "}par#___.ent1", child: "child1" },
+        { parent: "}par#___.ent1", child: "child2" },
         // ...
       ]
     };
@@ -197,7 +197,7 @@
       if (d.friendlyName) {
         return d.friendlyName;
       }
-      return transformIDtoDOMcriteria(d.id);
+      return d.id;
     }
 
     function sizeCircle(d) {
@@ -213,14 +213,25 @@
     }
 
     // We expect the data to be given in the following way: 10:6:32:64 which isn't compliant to set it up as a dom node, so we have to transform it
-    function transformIDtoDOMcriteria(idObj){
-      var transformedIP = null;
-      var strId = ''+idObj;
-      transformedIP = strId.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
-      transformedIP = "_"+transformedIP;
-      return transformedIP;
+    // TODO CHANGE THE FUNCTION SO THAT IT TAKES AN OBJECT AND RETURNS IT DOM OK
+    function transformIDtoDOMcriteria(d){
+      // What we have to check within an object -> Foreach nodes, links and owns
+      // Foreach object, if id, source, target, parent or child, modify with it with a DOM ok string
+      d.nodes.forEach(element => {
+        (element.id) ? element.id = '_'+element.id.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_') : null;
+      });
+      d.links.forEach(element => {
+        (element.source) ? element.source = '_'+element.source.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_') : null;
+        (element.target) ? element.target = '_'+element.target.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_') : null;
+      });
+      d.owns.forEach(element => {
+        (element.parent) ? element.parent = '_'+element.parent.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_') : null;
+        (element.child) ? element.child = '_'+element.child.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_') : null;
+      });
+      console.log("post modifs, d: "); console.log(d);
     }
 
+    transformIDtoDOMcriteria(UNFRIENDLY_DATA);
 
     var chart = d3_rs_network.html('blank')
       .category(category).tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
@@ -229,6 +240,7 @@
       ;
 
     // modify chart
+    // BIG CHANGE: we won't call UNFRIENDLY_DATA BUT CREATE A FUNCTION THAT CLEANS THE OBJECT
     d3.select('#elm').datum(UNFRIENDLY_DATA).call(chart);
 
   </script>

@@ -50,8 +50,7 @@ export default function chart(id) {
     return res;
   }
   function addTextForIDtextNode(d){
-    var modifiedID = transformIDtoDOMcriteria(d.id);
-    return "text"+modifiedID;
+    return "text"+d.id;
   }
 
   function _impl(context) {
@@ -125,7 +124,7 @@ export default function chart(id) {
         .selectAll("circle")
         .data(nodes)
         .enter().append("circle")
-        .attr("id", d=>  transformIDtoDOMcriteria(d.id))
+        .attr("id", d=>  d.id)
         .attr("class", d => d.strata)
         .attr("fill", function(d){
           if (d.strata == 0) {
@@ -182,8 +181,8 @@ export default function chart(id) {
         .data(links)
         .enter().append("line")
         .attr("stroke-width", linkWidthParameter )
-        .attr("idSource", d=> transformIDtoDOMcriteria( d.source) )
-        .attr("idTarget", d=> transformIDtoDOMcriteria(d.target) )
+        .attr("idSource", d=> ( d.source) )
+        .attr("idTarget", d=> (d.target) )
         ;
 
       // ---- FORCE SETUP
@@ -251,16 +250,16 @@ export default function chart(id) {
 
         link
           .attr("x1", function (d) {
-            return select("#"+transformIDtoDOMcriteria(d.source.id))._groups[0][0].cx.animVal.value;
+            return select("#"+(d.source.id))._groups[0][0].cx.animVal.value;
           })
           .attr("y1", function (d) { 
-            return select("#"+transformIDtoDOMcriteria(d.source.id))._groups[0][0].cy.animVal.value;
+            return select("#"+(d.source.id))._groups[0][0].cy.animVal.value;
           })
           .attr("x2", function (d) { 
-            return select("#"+transformIDtoDOMcriteria(d.target.id))._groups[0][0].cx.animVal.value;
+            return select("#"+(d.target.id))._groups[0][0].cx.animVal.value;
           })
           .attr("y2", function (d) { 
-            return select("#"+transformIDtoDOMcriteria(d.target.id))._groups[0][0].cy.animVal.value;
+            return select("#"+(d.target.id))._groups[0][0].cy.animVal.value;
           })
         ;
 
@@ -268,17 +267,15 @@ export default function chart(id) {
         .transition()
         .duration(10)
           .attr("x", function (d) {
-            var transformedID = transformIDtoDOMcriteria(d.id);
-            var circleValue = select("#" + transformedID)._groups[0][0].cx.animVal.value;
-            var circleWidth = select("#" + transformedID)._groups[0][0].r.animVal.value;
+            var circleValue = select("#" + d.id)._groups[0][0].cx.animVal.value;
+            var circleWidth = select("#" + d.id)._groups[0][0].r.animVal.value;
             var txt = (d.friendlyName) ? (d.friendlyName ) : d.id;
-            var txtLength = Number(select("#text"+transformedID)._groups[0][0].textLength.baseVal.valueAsString);
+            var txtLength = Number(select("#text"+d.id)._groups[0][0].textLength.baseVal.valueAsString);
             var newX = ( circleValue + txtLength >= sw )? ( circleValue-txtLength ) : circleValue;
             return newX;
           })
           .attr("y", function (d) { 
-            var transformedID = transformIDtoDOMcriteria(d.id);            
-            return select("#" +transformedID)._groups[0][0].cy.animVal.value; 
+            return select("#" +d.id)._groups[0][0].cy.animVal.value; 
           })
 
       }
