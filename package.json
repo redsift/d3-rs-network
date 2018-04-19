@@ -1,6 +1,6 @@
 {
   "name": "@redsift/d3-rs-network",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Generates network charts using D3v4.",
   "keywords": [
     "network",
@@ -15,7 +15,6 @@
     "url": "https://medium.com/@rahulpowar"
   },
   "main": "distribution/d3-rs-network.umd-es2015.js",
-  "browser": "distribution/d3-rs-network.umd-es2015.min.js",
   "jsnext:main": "index.js",
   "repository": {
     "type": "git",
