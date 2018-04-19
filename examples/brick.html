@@ -213,7 +213,6 @@
     }
 
     // We expect the data to be given in the following way: 10:6:32:64 which isn't compliant to set it up as a dom node, so we have to transform it
-    // TODO CHANGE THE FUNCTION SO THAT IT TAKES AN OBJECT AND RETURNS IT DOM OK
     function transformIDtoDOMcriteria(d){
       // What we have to check within an object -> Foreach nodes, links and owns
       // Foreach object, if id, source, target, parent or child, modify with it with a DOM ok string
@@ -236,7 +235,7 @@
     var chart = d3_rs_network.html('blank')
       .category(category).tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
       .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
-      .textDisplay(textDisplay).linkWidthParameter(linkWidthParameter).transformIDtoDOMcriteria(transformIDtoDOMcriteria)
+      .textDisplay(textDisplay).linkWidthParameter(linkWidthParameter)
       ;
 
     // modify chart

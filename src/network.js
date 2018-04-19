@@ -1,22 +1,9 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
-
-import {
-  event,
-  select
-} from 'd3-selection';
-import {
-  drag, 
-  forceSimulation,
-  forceLink,
-  forceManyBody,
-  forceCenter,
-  forceCollide
-} from 'd3-selection';
+import { event, select } from 'd3-selection';
+import { drag, forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from 'd3-selection';
 import { html as svg } from '@redsift/d3-rs-svg';
 import { presentation10, display} from '@redsift/d3-rs-theme';
-
-// >npm install --save d3-forceSimulation
 
 const DEFAULT_SIZE = 400;
 const DEFAULT_ASPECT = 0.5;
@@ -36,7 +23,6 @@ export default function chart(id) {
     scale = 1.0,
     category = null,
     textDisplay = (d) => d.id,
-    transformIDtoDOMcriteria = null,
     linkWidthParameter = (d) => Math.sqrt(d.value),
     tryGetChildren = null,
     tryGetParent = null,
@@ -264,8 +250,7 @@ export default function chart(id) {
         ;
 
         textNode
-        .transition()
-        .duration(10)
+        .transition().duration(10)
           .attr("x", function (d) {
             var circleValue = select("#" + d.id)._groups[0][0].cx.animVal.value;
             var circleWidth = select("#" + d.id)._groups[0][0].r.animVal.value;
@@ -360,10 +345,6 @@ export default function chart(id) {
 
   _impl.textDisplay = function (value) {
     return arguments.length ? (textDisplay = value, _impl) : textDisplay;
-  };
-
-  _impl.transformIDtoDOMcriteria = function (value) {
-    return arguments.length ? (transformIDtoDOMcriteria = value, _impl) : transformIDtoDOMcriteria;
   };
 
   _impl.linkWidthParameter = function (value) {
