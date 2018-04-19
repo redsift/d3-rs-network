@@ -19,19 +19,22 @@
       visibility: hidden;
       fill: red
     }
-    .grandFatherText {
-      visibility: visible;
-      fill: #F4F
-    }
     .fatherText {
       visibility: hidden;
       fill: #0044FF
+    }
+    .grandFatherText {
+      visibility: visible;
+      fill: #000
     }
     .childCircle {
       fill: peru
     }
     .fatherCircle {
       fill: paleturquoise
+    }
+    .grandFatherCircle {
+      fill: #560000
     }
   </style>
 </head>
@@ -225,7 +228,16 @@
       console.log("post modifs, d: "); console.log(d);
     }
 
-    transformIDtoDOMcriteria(UNFRIENDLY_DATA);
+    // We expect the data to be given in the following way: 10:6:32:64 which isn't compliant to set it up as a dom node, so we have to transform it
+    function transformOrderForD3Layering(d){
+      var newNodesStructure = [];
+
+      d.nodes.sort(function(a, b){return a.strata-b.strata});
+      
+      console.log("post modifs, d: "); console.log(d);
+    }
+
+    transformIDtoDOMcriteria(UNFRIENDLY_DATA); transformOrderForD3Layering(UNFRIENDLY_DATA);
 
     var chart = d3_rs_network.html('blank')
       .category(category).tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)

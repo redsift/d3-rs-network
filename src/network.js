@@ -32,7 +32,6 @@ export default function chart(id) {
   // TODO Function to create tree structure out of the other one created 
   function createTreeStructure(dataNodeLink){
     var res = {};
-
     return res;
   }
   function addTextForIDtextNode(d){
@@ -147,7 +146,11 @@ export default function chart(id) {
         .text( textDisplay )
         .attr("id", addTextForIDtextNode)
         .attr("class", "textNetwork")
-        .attr("class", (d) => d.strata)
+        .attr("class", function (d){
+          if (d.strata == 0) return "grandFatherText";
+          if (d.strata == 1) return "fatherText";
+          if (d.strata == 2) return "childText";
+        })
         .on("mouseover", function (d) {
           select(this)._groups[0][0].style.fill = "black";
         })
