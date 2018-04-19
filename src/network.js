@@ -66,6 +66,11 @@ export default function chart(id) {
       }
       console.log("directChildren: "); console.log(directChildren);
       console.log("grandChildren: "); console.log(grandChildren);
+      // For each node, we then calculate its size. 
+      // Basically its type size + size based on kids, with kids being worth more if grand kids too
+      var valueMult = (grandChildren.length >0) ? 5 : 2;
+      var nodeSize = BASE_SIZE_CHILD_NODE + 5*valueMult*directChildren.length + 5*grandChildren.length ;
+      nodes[i].sizeCircle = nodeSize;
     }
   }
 
@@ -159,15 +164,11 @@ export default function chart(id) {
             return 'blue';
           }
         })
-        .attr("r", function (d) {
-          if (d.strata == 0) {
-            return BASE_SIZE_GRANDFATHER_NODE;
-          } else if (d.strata == 1) {
-            return BASE_SIZE_FATHER_NODE;
-          } else if (d.strata == 2) {
-            return BASE_SIZE_CHILD_NODE;
-          }
-        })
+        // .attr("r", function (d) {
+        //   if (d.strata == 0) { return BASE_SIZE_GRANDFATHER_NODE } else if (d.strata == 1) { return BASE_SIZE_FATHER_NODE;  } else if (d.strata == 2) { return BASE_SIZE_CHILD_NODE;
+        //   }
+        // })
+        .attr("r", d => d.sizeCircle)
         .on("click", function (d) {
           console.log("clicked on d: "); console.log(d);
           console.log("tryGetChildren: "); console.log(tryGetChildren(d.id));
