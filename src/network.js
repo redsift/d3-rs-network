@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 
-import { select } from 'd3-selection';
+import { select, selectAll } from 'd3-selection';
 import { drag, forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from 'd3-selection';
 import { event } from 'd3-selection';
 import { html as svg } from '@redsift/d3-rs-svg';
@@ -105,6 +105,15 @@ export default function chart(id) {
         .enter().append("circle")
         .attr("id", d => d.id)
         .attr("class", d => d.strata)
+        .attr("fill", function(d){
+          if (d.strata == 0) {
+            return 'red';
+          } else if (d.strata == 1) {
+            return 'green';
+          } else if (d.strata == 2) {
+            return 'blue';
+          }
+        })
         .attr("r", function (d) {
           if (d.strata == 0) {
             return BASE_SIZE_GRANDFATHER_NODE;
@@ -130,7 +139,7 @@ export default function chart(id) {
         .data(nodes)
         .enter().append("text")
         .text( textDisplay )
-        .attr("id", d => d.id)
+        .attr("id", d => "text"+d.id)
         .attr("class", "textNetwork")
         .attr("class", (d) => d.strata)
         .on("mouseover", function (d) {
@@ -144,7 +153,6 @@ export default function chart(id) {
           .on("drag", dragged)
           .on("end", dragended))
         ;
-
 
       var link = nodeEnter.append("g")
         .attr("class", "links")
@@ -237,11 +245,16 @@ export default function chart(id) {
 
         textNode
           .attr("x", function (d) {
-            return select("#" + d.id)._groups[0][0].cx.animVal.value;
+            var circleValue = select("#" + d.id)._groups[0][0].cx.animVal.value;
+            var circleWidth = select("#" + d.id)._groups[0][0].r.animVal.value;
+            var txt = (d.friendlyName) ? (d.friendlyName ) : d.id;
+            var txtLength = Number(select("#text"+d.id)._groups[0][0].textLength.baseVal.valueAsString);
+            var newX = ( circleValue + txtLength >= sw )? ( circleValue-txtLength ) : circleValue;
+            return newX;
           })
-          .attr("y", function (d) { return select("#" + d.id)._groups[0][0].cy.animVal.value; })
-
-
+          .attr("y", function (d) { 
+            return select("#" + d.id)._groups[0][0].cy.animVal.value; 
+          })
 
       }
 
