@@ -3,14 +3,15 @@
 <head>
   <link rel="stylesheet" type="text/css" href="https://static.redsift.io/reusable/ui-rs-core/latest/css/ui-rs-core.min.css">
   <style>
-    .links line {
-      stroke: #445899;
-      stroke-opacity: 0.6;
+    #dynamicTextDisplay{
+      /* visibility: hidden; */
+      fill-opacity: 0.2; 
+      border: gray;    
     }
     .nodes circle {
       stroke: #888;
-      fill-opacity: 0.2;
-      stroke-width: 1.5px
+      fill-opacity: 0.4;
+      stroke-width: 1px
     }
     .textNetwork {
       font-size: 10px
@@ -42,6 +43,7 @@
 <body>
   <div id="elm"></div>
   <div id="additionDisplay"></div>
+  <div id="dynamicTextDisplay"></div>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="/d3-rs-network.umd-es2015.min.js"></script>
   <script>
@@ -137,7 +139,7 @@
         { "source": "10.112.14.96", "target": "1.1.1.1", "value": 38 },
         { "source": "10.112.14.96", "target": "4.4.4.4", "value": 38 },
         { "source": "10.112.14.96", "target": "4.4.4.4", "value": 38 },
-        { "source": "10.112.14.96", "target": "8.8.8.8", "value": 38 },
+        { "source": "10.112.14.96", "target": "8.8.8.8", "value": 1000 },
         { "source": "10.112.14.96", "target": "1.1.1.1", "value": 38 },
         { "source": "159.8.146.158", "target": "4.4.4.4", "value": 38 },
         { "source": "159.8.146.158", "target": "8.8.8.8", "value": 1.35435744 },
@@ -168,7 +170,6 @@
       });
       return arrayChildren;
     }
-
     function tryGetParent(idObj) {
       var parent = null;
       UNFRIENDLY_DATA.owns.forEach(element => {
@@ -177,7 +178,6 @@
       });
       return parent;
     }
-
     // Naive, but useful function to order to objects within the bubbles of the tree
     function tryGetIndexBrothers(idObj) {
       var potentialFather = tryGetParent(idObj);
@@ -204,16 +204,29 @@
       return JSON.stringify(d);
     }
 
-    // function sizeCircle(d) {
-    //   if (tryGetChildren(d.id).length > 0) {
-    //     return 40 * tryGetChildren(d.id).length;
-    //   } else {
-    //     return null;
-    //   }
-    // }
-
-    // TODO
-    function linkWidthParameter(d) {}
+    // ---- Code section to  
+    var threshold = 100;
+    function linkWidthParameter(d) {
+      console.log("d: ");console.log(d);
+      console.log("linkWidthParameter d: ");
+      console.log("d.value: "+d.value);
+      console.log("threshold: "+threshold);
+      if (d.value <= threshold) {
+        console.log( "value < threshold, sqrt value is: "+(Math.sqrt(d.value)) );
+        return Math.sqrt(d.value)/2 ;
+      } else { 
+        return 1
+      };
+    }
+    function colorLinkParameter(d){
+      console.log("colorLinkParameter");
+      console.log("d.value<= threshold: ");console.log(d.value<= threshold);
+      return (d.value <= threshold ) ?  'black' : 'red';
+    }
+    function setStrokeOpacity(d){
+      console.log("setStrokeOpacity d.value <= threshold : "+(d.value <= threshold));
+      return (d.value <= threshold ) ?  0.15 : 0.8;
+    }
 
     function addAdditionalDisplay(d){
       return JSON.stringify(d);
@@ -250,7 +263,8 @@
       .category(category).tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
       .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
       .textDisplay(textDisplay).linkWidthParameter(linkWidthParameter)
-      .addAdditionalDisplay(addAdditionalDisplay)
+      .addAdditionalDisplay(addAdditionalDisplay).colorLinkParameter(colorLinkParameter)
+      .setStrokeOpacity(setStrokeOpacity)
     ;
 
     // modify chart

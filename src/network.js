@@ -12,6 +12,7 @@ const BASE_SIZE_GRANDFATHER_NODE = 50;
 const BASE_SIZE_FATHER_NODE = 20;
 const BASE_SIZE_CHILD_NODE = 5;
 
+
 export default function chart(id) {
   let classed = 'chart-network',
     background = undefined,
@@ -24,14 +25,18 @@ export default function chart(id) {
     category = null,
     textDisplay = (d) => d.id,
     linkWidthParameter = (d) => Math.sqrt(d.value),
+    colorLinkParameter = (d) => 'black',
     addAdditionalDisplay = (d) => JSON.stringify(d),
+    setStrokeOpacity = (d) => 0.15,
     tryGetChildren = null,
     tryGetParent = null,
     tryGetIndexBrothers = null,
-    tryGetNumberOfBrothers = null;
+    tryGetNumberOfBrothers = null
+    ;
 
 
   let idStickCenter = null;
+  
 
   // TODO Function to create tree structure out of the other one created 
   function createTreeStructure(dataNodeLink) {
@@ -222,6 +227,11 @@ export default function chart(id) {
           console.log("clicked on d.id: "); console.log(d.id);
           setCircleCenter(d);
         })
+        .on("mouseover", function (d) {
+
+          console.log("hover on d.id: "); console.log(d.id);
+          // setCircleCenter(d);
+        })        
         .call(drag()
           .on("start", dragstarted)
           .on("drag", dragged)
@@ -258,6 +268,8 @@ export default function chart(id) {
         .selectAll("line")
         .data(links)
         .enter().append("line")
+        .attr("stroke", colorLinkParameter)
+        .attr("stroke-opacity", setStrokeOpacity)
         .attr("stroke-width", linkWidthParameter)
         .attr("idSource", d => (d.source))
         .attr("idTarget", d => (d.target))
@@ -346,7 +358,6 @@ export default function chart(id) {
               }
               return d.y = Math.max(this.r.animVal.value, Math.min(sh - this.r.animVal.value, d.y));
             }
-
           })
           ;
 
@@ -472,6 +483,14 @@ export default function chart(id) {
     return arguments.length ? (addAdditionalDisplay = value, _impl) : addAdditionalDisplay;
   };
 
+  _impl.colorLinkParameter = function (value) {
+    return arguments.length ? (colorLinkParameter = value, _impl) : colorLinkParameter;
+  };
+
+  _impl.setStrokeOpacity = function (value) {
+    return arguments.length ? (setStrokeOpacity = value, _impl) : setStrokeOpacity;
+  };
+  
 
   return _impl;
 
