@@ -227,10 +227,18 @@ export default function chart(id) {
           console.log("clicked on d.id: "); console.log(d.id);
           setCircleCenter(d);
         })
+        .on("mouseenter", function(d){
+          console.log("mouseenter");
+          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "visible";          
+        })
         .on("mouseover", function (d) {
-
           console.log("hover on d.id: "); console.log(d.id);
-          // setCircleCenter(d);
+          console.log(select("#dynamicTextDisplay"));
+          select("#dynamicTextDisplay")._groups[0][0].textContent = JSON.stringify(d);
+        })        
+        .on("mouseout", function(d){
+          console.log("mouseout");
+          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "hidden";
         })        
         .call(drag()
           .on("start", dragstarted)
@@ -251,12 +259,25 @@ export default function chart(id) {
           if (d.strata == 1) return "fatherText";
           if (d.strata == 2) return "childText";
         })
+        .on("mouseenter", function(d){
+          console.log("mouseenter");
+          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "visible";          
+        })
         .on("mouseover", function (d) {
-          select(this)._groups[0][0].style.fill = "black";
+          console.log("hover on d.id: "); console.log(d.id);
+          console.log(select("#dynamicTextDisplay"));
+          select("#dynamicTextDisplay")._groups[0][0].textContent = JSON.stringify(d);
+        })        
+        .on("mouseout", function(d){
+          console.log("mouseout");
+          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "hidden";
         })
-        .on("mouseout", function (d) {
-          select(this)._groups[0][0].style.fill = "";
-        })
+        // .on("mouseover", function (d) {
+        //   select(this)._groups[0][0].style.fill = "black";
+        // })
+        // .on("mouseout", function (d) {
+        //   select(this)._groups[0][0].style.fill = "";
+        // })
         .call(drag()
           .on("start", dragstarted)
           .on("drag", dragged)
@@ -273,6 +294,19 @@ export default function chart(id) {
         .attr("stroke-width", linkWidthParameter)
         .attr("idSource", d => (d.source))
         .attr("idTarget", d => (d.target))
+        .on("mouseenter", function(d){
+          console.log("mouseenter");
+          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "visible";          
+        })
+        .on("mouseover", function (d) {
+          console.log("hover on d.id: "); console.log(d.id);
+          console.log(select("#dynamicTextDisplay"));
+          select("#dynamicTextDisplay")._groups[0][0].textContent = JSON.stringify(d);
+        })        
+        .on("mouseout", function(d){
+          console.log("mouseout");
+          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "hidden";
+        })
         ;
 
       // ---- FORCE SETUP
