@@ -209,6 +209,7 @@
     function linkWidthParameter(d) {
 
     }
+    
 
     // We expect the data to be given in the following way: 10:6:32:64 which isn't compliant to set it up as a dom node, so we have to transform it
     function transformIDtoDOMcriteria(d){
@@ -233,7 +234,7 @@
       var newNodesStructure = [];
 
       d.nodes.sort(function(a, b){return a.strata-b.strata});
-      
+
       console.log("post modifs, d: "); console.log(d);
     }
 

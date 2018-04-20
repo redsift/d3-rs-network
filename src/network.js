@@ -29,6 +29,8 @@ export default function chart(id) {
     tryGetIndexBrothers = null,
     tryGetNumberOfBrothers = null;
 
+  let idStickCenter = null;
+
   // TODO Function to create tree structure out of the other one created 
   function createTreeStructure(dataNodeLink){
     var res = {};
@@ -36,6 +38,20 @@ export default function chart(id) {
   }
   function addTextForIDtextNode(d){
     return "text"+d.id;
+  }
+
+  // TODO
+  // On click of a node, it goes in the center and sticks to it, with an additional label put on it.
+  // If clicked again, the label has to be removed
+  // If the node has parents, the parents have to followthe move
+  // data is assumed to be accessible when called
+  function setCircleCenter( d ){
+    // Previous code where we tried not to work with a global variable. But annoying because it would force to make modifications for plenty of elements to query
+    // (select("#"+d.id)._groups[0][0].stickCenter) ? 
+    // select("#"+d.id)._groups[0][0].stickCenter = ! select("#"+d.id)._groups[0][0].stickCenter
+    //   : select("#"+d.id)._groups[0][0].stickCenter = true;
+    idStickCenter = (idStickCenter) ?  ( (idStickCenter==d.id) ? idStickCenter = false : idStickCenter=d.id  ) : d.id;
+    console.log("idStickCenter: ");console.log(idStickCenter);
   }
 
   function setWidthLinkBasedOnParameter(parameter,data){
@@ -64,12 +80,11 @@ export default function chart(id) {
       for (var j = 0; j < directChildren.length; j++){
         grandChildren = grandChildren.concat(tryGetChildren(directChildren[j]));
       }
-      console.log("directChildren: "); console.log(directChildren);
-      console.log("grandChildren: "); console.log(grandChildren);
       // For each node, we then calculate its size. 
       // Basically its type size + size based on kids, with kids being worth more if grand kids too
       var valueMult = (grandChildren.length >0) ? 5 : 2;
-      var nodeSize = BASE_SIZE_CHILD_NODE + 5*valueMult*directChildren.length + 5*grandChildren.length ;
+      var nodeSize = BASE_SIZE_CHILD_NODE 
+        + BASE_SIZE_CHILD_NODE*valueMult*directChildren.length + BASE_SIZE_CHILD_NODE*grandChildren.length ;
       nodes[i].sizeCircle = nodeSize;
     }
   }
@@ -130,7 +145,7 @@ export default function chart(id) {
       }
 
       // -------- PACKING FORCE TODO FIX BUG, we should be able to call it without d3.pack
-      console.log("sw - 4: "+(sw - 4)+", sh - 4: "+(sh - 4));
+      // console.log("sw - 4: "+(sw - 4)+", sh - 4: "+(sh - 4));
       // var pack = pack().size([sw - 4, sh - 4]);
 
       // -------- NETWORK CHART
@@ -164,14 +179,10 @@ export default function chart(id) {
             return 'blue';
           }
         })
-        // .attr("r", function (d) {
-        //   if (d.strata == 0) { return BASE_SIZE_GRANDFATHER_NODE } else if (d.strata == 1) { return BASE_SIZE_FATHER_NODE;  } else if (d.strata == 2) { return BASE_SIZE_CHILD_NODE;
-        //   }
-        // })
         .attr("r", d => d.sizeCircle)
         .on("click", function (d) {
           console.log("clicked on d: "); console.log(d);
-          console.log("tryGetChildren: "); console.log(tryGetChildren(d.id));
+          setCircleCenter(d);
         })
         .call(drag()
           .on("start", dragstarted)
@@ -240,6 +251,9 @@ export default function chart(id) {
       function ticked() {
         nodeCircle
           .attr("cx", function (d) {
+
+            if (select("#" + d.id)._groups[0][0].stickCenter) console.log("I am "+d.id+" and should stick to the center")
+
             if (d.strata == 0) {
               return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
             } else if (d.strata == 1 || d.strata == 2) {
