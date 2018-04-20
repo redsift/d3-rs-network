@@ -312,7 +312,7 @@ export default function chart(id) {
       // ---- FORCE SETUP
       var simulation = forceSimulation(data.nodes)
         .force("link", forceLink().id(function (d) { return d.id; }))
-        .force("charge", forceManyBody().strength(-500))
+        .force("charge", forceManyBody().strength(-60))
         .force("center", forceCenter(sw / 2, sh / 2))
         .force('collision', forceCollide().radius(function (d) {
           return d.radius
