@@ -24,10 +24,12 @@ export default function chart(id) {
     category = null,
     textDisplay = (d) => d.id,
     linkWidthParameter = (d) => Math.sqrt(d.value),
+    addAdditionalDisplay = (d) => JSON.stringify(d),
     tryGetChildren = null,
     tryGetParent = null,
     tryGetIndexBrothers = null,
     tryGetNumberOfBrothers = null;
+
 
   let idStickCenter = null;
 
@@ -40,18 +42,43 @@ export default function chart(id) {
     return "text" + d.id;
   }
 
-  // TODO
-  // On click of a node, it goes in the center and sticks to it, with an additional label put on it.
-  // If clicked again, the label has to be removed
-  // If the node has parents, the parents have to followthe move
-  // data is assumed to be accessible when called
   function setCircleCenter(d) {
-    // Previous code where we tried not to work with a global variable. But annoying because it would force to make modifications for plenty of elements to query
-    // (select("#"+d.id)._groups[0][0].stickCenter) ? 
-    // select("#"+d.id)._groups[0][0].stickCenter = ! select("#"+d.id)._groups[0][0].stickCenter
-    //   : select("#"+d.id)._groups[0][0].stickCenter = true;
-    idStickCenter = (idStickCenter) ? ((idStickCenter == d.id) ? idStickCenter = false : idStickCenter = d.id) : d.id;
-    console.log("idStickCenter: "); console.log(idStickCenter);
+    var parent = tryGetParent(d.id);
+    console.log("parent: ");console.log(parent);
+    if (idStickCenter){
+      console.log("idStickCenter true, with idStickCenter:"+idStickCenter+", d.id: "+d.id);
+      if (idStickCenter == d.id) { console.log("idStickCenter == d.id"); idStickCenter = false;}
+      if (parent && idStickCenter == parent) {idStickCenter = false;}
+      if ( parent && tryGetParent(parent) && tryGetParent(parent) == idStickCenter ) 
+      {idStickCenter = false;}
+    } else {
+    // First case, no parent. Then verify if parent of parent
+    if (!parent) { 
+      console.log("!parent");
+      idStickCenter = d.id; 
+    } else {
+      console.log("parent true and parent: "); console.log(parent);
+      var potentialGrandParent = tryGetParent(parent);
+       if(potentialGrandParent ) {
+        console.log("potentialGrandParent true and "); console.log(potentialGrandParent);
+        idStickCenter = potentialGrandParent 
+       } else { 
+        console.log("potentialGrandParent false "); 
+        idStickCenter = parent
+      }
+    }
+    }
+    // idStickCenter = (idStickCenter) ? ((idStickCenter == d.id) ? idStickCenter = false : idStickCenter = d.id) : d.id;
+    console.log("setCircleCenter idStickCenter: "); console.log(idStickCenter);
+  }
+
+  // Returns the id and index of the child if it is assigned to stickCenter
+  function returnChildStickCenter(d){
+    var childStick = null;
+    var children = tryGetChildren(d.id);
+    var indexChild = children.findIndex(x => x == idStickCenter);
+    if (indexChild != -1) console.log("found the child stick and its index is:"+indexChild);
+    return (indexChild != -1 )? {idOfSticker: idStickCenter, index : indexChild} : null;
   }
 
   function setWidthLinkBasedOnParameter(parameter, data) {
@@ -82,13 +109,13 @@ export default function chart(id) {
       }
       // For each node, we then calculate its size. 
       // Basically its type size + size based on kids, with kids being worth more if grand kids too
-      var valueMult = (grandChildren.length > 0) ? 5 : 2;
+      var valueMult = (grandChildren.length > 0) ? 3 : 2;
       var nodeSize = BASE_SIZE_CHILD_NODE
-        + BASE_SIZE_CHILD_NODE * valueMult * directChildren.length + BASE_SIZE_CHILD_NODE * grandChildren.length;
+        + BASE_SIZE_CHILD_NODE * valueMult * directChildren.length 
+        + BASE_SIZE_CHILD_NODE * grandChildren.length;
       nodes[i].sizeCircle = nodeSize;
     }
   }
-
 
   function _impl(context) {
     let selection = context.selection ? context.selection() : context,
@@ -181,7 +208,7 @@ export default function chart(id) {
         })
         .attr("r", d => d.sizeCircle)
         .on("click", function (d) {
-          console.log("clicked on d: "); console.log(d);
+          console.log("clicked on d.id: "); console.log(d.id);
           setCircleCenter(d);
         })
         .call(drag()
@@ -251,50 +278,52 @@ export default function chart(id) {
       function ticked() {
         nodeCircle
           .attr("cx", function (d) {
-            // make tests for child and parent
-            var testParent = false;
-            if (idStickCenter && idStickCenter == d.id) {
-              return sw/2;
-              // child or parent of idStickCenter
-            } else if (testParent){
 
-            } else {
-              if (d.strata == 0) {
-                return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
-              } else if (d.strata == 1 || d.strata == 2) {
-                var idParent = tryGetParent(d.id);
-                if (idParent != null) {
-                  var parentCenterX = select("#" + idParent)._groups[0][0].cx.animVal.value;
-                  var r = 20 / d.strata;
-                  var posIndex = tryGetIndexBrothers(d.id);
-                  var numBrothers = tryGetNumberOfBrothers(d.id);
-                  var angleInDegrees = posIndex / numBrothers * 360;
-                  var angleInRadians = angleInDegrees * (2 * Math.PI / 360);
-                  var cosTheta = Math.cos(angleInRadians);
-                  var sinTheta = Math.sin(angleInRadians);
-                  var possible_cx = parentCenterX + cosTheta * r;
-                  return possible_cx;
-                }
-                return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
+            if (idStickCenter && idStickCenter == d.id) return sw / 2;
+            
+            if (d.strata == 0) {
+              return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
+            } else if (d.strata == 1 || d.strata == 2) {
+              // Parents have to give instructions to the grandParent to follow, and its brother too
+              // Children have to tell everyone to follow them.
+              var idParent = tryGetParent(d.id);
+              if (idParent != null) {
+                var parentCenterX = select("#" + idParent)._groups[0][0].cx.animVal.value;
+                // This should be defined by the size of the father, not an input value
+                var sizeParent = select("#" + idParent)._groups[0][0].r.animVal.value;
+                var r = (sizeParent / d.strata) - select("#" + d.id)._groups[0][0].r.animVal.value;
+
+                var posIndex = tryGetIndexBrothers(d.id);
+                var numBrothers = tryGetNumberOfBrothers(d.id);
+                var angleInDegrees = posIndex / numBrothers * 360;
+                var angleInRadians = angleInDegrees * (2 * Math.PI / 360);
+                var cosTheta = Math.cos(angleInRadians);
+                var sinTheta = Math.sin(angleInRadians);
+                var possible_cx = parentCenterX + cosTheta * r;
+
+                // // Direct child is the idStickCenter
+                // var childCenterStick = returnChildStickCenter(d);
+                // if (childCenterStick) {
+                //   console.log("childCenterStick: ");
+                //   console.log(childCenterStick);
+                // }
+                return possible_cx;
               }
+              return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
             }
           })
           .attr("cy", function (d) {
-            // make tests for child and parent
-            var testParent = false;
-            if (idStickCenter && idStickCenter == d.id) {
-              return sh/2;
-              // child or parent of idStickCenter
-            } else if (testParent){
 
-            } else {
+            if (idStickCenter && idStickCenter == d.id) return sh / 2;
+
             if (d.strata == 0) {
               return d.y = Math.max(this.r.animVal.value, Math.min(sh - this.r.animVal.value, d.y));
             } else if (d.strata == 1 || d.strata == 2) {
               var idParent = tryGetParent(d.id);
               if (idParent != null) {
                 var parentCenterY = select("#" + idParent)._groups[0][0].cy.animVal.value;
-                var r = 20 / d.strata;
+                var sizeParent = select("#" + idParent)._groups[0][0].r.animVal.value;
+                var r = ( sizeParent / d.strata ) - select("#" + d.id)._groups[0][0].r.animVal.value ;                
                 var posIndex = tryGetIndexBrothers(d.id);
                 var numBrothers = tryGetNumberOfBrothers(d.id);
                 var angleInDegrees = posIndex / numBrothers * 360;
@@ -306,7 +335,7 @@ export default function chart(id) {
               }
               return d.y = Math.max(this.r.animVal.value, Math.min(sh - this.r.animVal.value, d.y));
             }
-          }            
+
           })
           ;
 
@@ -427,6 +456,10 @@ export default function chart(id) {
   _impl.linkWidthParameter = function (value) {
     return arguments.length ? (linkWidthParameter = value, _impl) : linkWidthParameter;
   };
+
+  _impl.addAdditionalDisplay = function (value) {
+    return arguments.length ? (addAdditionalDisplay = value, _impl) : addAdditionalDisplay;
+  };  
 
 
   return _impl;

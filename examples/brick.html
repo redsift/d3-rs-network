@@ -41,6 +41,7 @@
 
 <body>
   <div id="elm"></div>
+  <div id="additionDisplay"></div>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="/d3-rs-network.umd-es2015.min.js"></script>
   <script>
@@ -126,6 +127,7 @@
         { "id": "159.8.146.158", "strata": 2 },
         { "id": "06:50:03:46:58:81", "strata": 1 },
         { "id": "06:d8:c7:90:c9:7a", "strata": 1 },
+        { "id": "06:d8:c7:90:c9:69", "strata": 1 },        
         { "id": "8.8.8.8", "strata": 0 },
         { "id": "1.1.1.1", "strata": 0 },
         { "id": "4.4.4.4", "strata": 0 }
@@ -146,6 +148,7 @@
         { "parent": "06:d8:c7:90:c9:7a", "child": "10.112.14.96" },
         { "parent": "06:d8:c7:90:c9:7a", "child": "159.8.146.158" },
         { "parent": "s0.alpha.redsift.tech", "child": "06:50:03:46:58:81" },
+        { "parent": "s0.alpha.redsift.tech", "child": "06:d8:c7:90:c9:69" },
         { "parent": "s0.alpha.redsift.tech", "child": "06:d8:c7:90:c9:7a" }
       ]
     }
@@ -197,19 +200,24 @@
       }
       return d.id;
     }
-
-    function sizeCircle(d) {
-      if (tryGetChildren(d.id).length > 0) {
-        return 40 * tryGetChildren(d.id).length;
-      } else {
-        return null;
-      }
+    function addAdditionalDisplay(d){
+      return JSON.stringify(d);
     }
 
-    function linkWidthParameter(d) {
+    // function sizeCircle(d) {
+    //   if (tryGetChildren(d.id).length > 0) {
+    //     return 40 * tryGetChildren(d.id).length;
+    //   } else {
+    //     return null;
+    //   }
+    // }
 
+    // TODO
+    function linkWidthParameter(d) {}
+
+    function addAdditionalDisplay(d){
+      return JSON.stringify(d);
     }
-    
 
     // We expect the data to be given in the following way: 10:6:32:64 which isn't compliant to set it up as a dom node, so we have to transform it
     function transformIDtoDOMcriteria(d){
@@ -232,9 +240,7 @@
     // We expect the data to be given in the following way: 10:6:32:64 which isn't compliant to set it up as a dom node, so we have to transform it
     function transformOrderForD3Layering(d){
       var newNodesStructure = [];
-
       d.nodes.sort(function(a, b){return a.strata-b.strata});
-
       console.log("post modifs, d: "); console.log(d);
     }
 
@@ -244,7 +250,8 @@
       .category(category).tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
       .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
       .textDisplay(textDisplay).linkWidthParameter(linkWidthParameter)
-      ;
+      .addAdditionalDisplay(addAdditionalDisplay)
+    ;
 
     // modify chart
     // BIG CHANGE: we won't call UNFRIENDLY_DATA BUT CREATE A FUNCTION THAT CLEANS THE OBJECT
