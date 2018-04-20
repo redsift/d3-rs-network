@@ -1,6 +1,6 @@
 {
   "name": "@redsift/d3-rs-network",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Generates network charts using D3v4.",
   "keywords": [
     "network",
