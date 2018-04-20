@@ -44,41 +44,52 @@ export default function chart(id) {
 
   function setCircleCenter(d) {
     var parent = tryGetParent(d.id);
-    console.log("parent: ");console.log(parent);
-    if (idStickCenter){
-      console.log("idStickCenter true, with idStickCenter:"+idStickCenter+", d.id: "+d.id);
-      if (idStickCenter == d.id) { console.log("idStickCenter == d.id"); idStickCenter = false;}
-      if (parent && idStickCenter == parent) {idStickCenter = false;}
-      if ( parent && tryGetParent(parent) && tryGetParent(parent) == idStickCenter ) 
-      {idStickCenter = false;}
-    } else {
-    // First case, no parent. Then verify if parent of parent
-    if (!parent) { 
-      console.log("!parent");
-      idStickCenter = d.id; 
-    } else {
-      console.log("parent true and parent: "); console.log(parent);
-      var potentialGrandParent = tryGetParent(parent);
-       if(potentialGrandParent ) {
-        console.log("potentialGrandParent true and "); console.log(potentialGrandParent);
-        idStickCenter = potentialGrandParent 
-       } else { 
-        console.log("potentialGrandParent false "); 
-        idStickCenter = parent
+    var potentialGrandParent = tryGetParent(parent);    
+    console.log("parent: "); console.log(parent);
+    if (idStickCenter) {
+      if (idStickCenter == d.id) {
+        idStickCenter = false;
+      } 
+      if (parent && idStickCenter == parent) {
+        idStickCenter = false;
+      }
+      if (parent && tryGetParent(parent) && tryGetParent(parent) == idStickCenter) { idStickCenter = false; }
+      // New value
+      if (idStickCenter){
+        if (!parent) {
+          idStickCenter = d.id;
+        } else {
+          if (potentialGrandParent) {
+            idStickCenter = potentialGrandParent
+          } else {
+            idStickCenter = parent
+          }          
       }
     }
+
+    } else {
+      // First case, no parent. Then verify if parent of parent
+      if (!parent) {
+        idStickCenter = d.id;
+      } else {
+        if (potentialGrandParent) {
+          idStickCenter = potentialGrandParent
+        } else {
+          idStickCenter = parent
+        }
+      }
     }
     // idStickCenter = (idStickCenter) ? ((idStickCenter == d.id) ? idStickCenter = false : idStickCenter = d.id) : d.id;
     console.log("setCircleCenter idStickCenter: "); console.log(idStickCenter);
   }
 
   // Returns the id and index of the child if it is assigned to stickCenter
-  function returnChildStickCenter(d){
+  function returnChildStickCenter(d) {
     var childStick = null;
     var children = tryGetChildren(d.id);
     var indexChild = children.findIndex(x => x == idStickCenter);
-    if (indexChild != -1) console.log("found the child stick and its index is:"+indexChild);
-    return (indexChild != -1 )? {idOfSticker: idStickCenter, index : indexChild} : null;
+    if (indexChild != -1) console.log("found the child stick and its index is:" + indexChild);
+    return (indexChild != -1) ? { idOfSticker: idStickCenter, index: indexChild } : null;
   }
 
   function setWidthLinkBasedOnParameter(parameter, data) {
@@ -111,7 +122,7 @@ export default function chart(id) {
       // Basically its type size + size based on kids, with kids being worth more if grand kids too
       var valueMult = (grandChildren.length > 0) ? 3 : 2;
       var nodeSize = BASE_SIZE_CHILD_NODE
-        + BASE_SIZE_CHILD_NODE * valueMult * directChildren.length 
+        + BASE_SIZE_CHILD_NODE * valueMult * directChildren.length
         + BASE_SIZE_CHILD_NODE * grandChildren.length;
       nodes[i].sizeCircle = nodeSize;
     }
@@ -280,7 +291,7 @@ export default function chart(id) {
           .attr("cx", function (d) {
 
             if (idStickCenter && idStickCenter == d.id) return sw / 2;
-            
+
             if (d.strata == 0) {
               return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
             } else if (d.strata == 1 || d.strata == 2) {
@@ -323,7 +334,7 @@ export default function chart(id) {
               if (idParent != null) {
                 var parentCenterY = select("#" + idParent)._groups[0][0].cy.animVal.value;
                 var sizeParent = select("#" + idParent)._groups[0][0].r.animVal.value;
-                var r = ( sizeParent / d.strata ) - select("#" + d.id)._groups[0][0].r.animVal.value ;                
+                var r = (sizeParent / d.strata) - select("#" + d.id)._groups[0][0].r.animVal.value;
                 var posIndex = tryGetIndexBrothers(d.id);
                 var numBrothers = tryGetNumberOfBrothers(d.id);
                 var angleInDegrees = posIndex / numBrothers * 360;
@@ -459,7 +470,7 @@ export default function chart(id) {
 
   _impl.addAdditionalDisplay = function (value) {
     return arguments.length ? (addAdditionalDisplay = value, _impl) : addAdditionalDisplay;
-  };  
+  };
 
 
   return _impl;
