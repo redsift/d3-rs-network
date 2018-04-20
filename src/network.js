@@ -3,7 +3,7 @@
 import { event, select } from 'd3-selection';
 import { drag, forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from 'd3-selection';
 import { html as svg } from '@redsift/d3-rs-svg';
-import { presentation10, display} from '@redsift/d3-rs-theme';
+import { presentation10, display } from '@redsift/d3-rs-theme';
 
 const DEFAULT_SIZE = 400;
 const DEFAULT_ASPECT = 0.5;
@@ -32,12 +32,12 @@ export default function chart(id) {
   let idStickCenter = null;
 
   // TODO Function to create tree structure out of the other one created 
-  function createTreeStructure(dataNodeLink){
+  function createTreeStructure(dataNodeLink) {
     var res = {};
     return res;
   }
-  function addTextForIDtextNode(d){
-    return "text"+d.id;
+  function addTextForIDtextNode(d) {
+    return "text" + d.id;
   }
 
   // TODO
@@ -45,18 +45,18 @@ export default function chart(id) {
   // If clicked again, the label has to be removed
   // If the node has parents, the parents have to followthe move
   // data is assumed to be accessible when called
-  function setCircleCenter( d ){
+  function setCircleCenter(d) {
     // Previous code where we tried not to work with a global variable. But annoying because it would force to make modifications for plenty of elements to query
     // (select("#"+d.id)._groups[0][0].stickCenter) ? 
     // select("#"+d.id)._groups[0][0].stickCenter = ! select("#"+d.id)._groups[0][0].stickCenter
     //   : select("#"+d.id)._groups[0][0].stickCenter = true;
-    idStickCenter = (idStickCenter) ?  ( (idStickCenter==d.id) ? idStickCenter = false : idStickCenter=d.id  ) : d.id;
-    console.log("idStickCenter: ");console.log(idStickCenter);
+    idStickCenter = (idStickCenter) ? ((idStickCenter == d.id) ? idStickCenter = false : idStickCenter = d.id) : d.id;
+    console.log("idStickCenter: "); console.log(idStickCenter);
   }
 
-  function setWidthLinkBasedOnParameter(parameter,data){
+  function setWidthLinkBasedOnParameter(parameter, data) {
     var arrNormalizedParameter = [];
-    for (var i =0; i < data.links.length; i++){
+    for (var i = 0; i < data.links.length; i++) {
       var link = data.links[i];
       (link.hasOwnProperty(parameter)) ? arrNormalizedParameter.push(link[parameter]) : null;
     }
@@ -64,27 +64,27 @@ export default function chart(id) {
     var ratio = Math.max(...arrNormalizedParameter) / 100;
     arrNormalizedParameter = arrNormalizedParameter.map(v => Math.round(v / ratio) / 100);
     // Refeed that in the data
-    for ( var i = 0; i <data.links.length; i++ ){
+    for (var i = 0; i < data.links.length; i++) {
       data.links[i].normalizedParam = arrNormalizedParameter[i];
     }
   }
 
   // TODO: Kind of the same as the function above, but for size of circle 
-  function setNodeSizeBasedOnParameter(parameter, data){}
+  function setNodeSizeBasedOnParameter(parameter, data) { }
 
-  function setSizeNodePerOffsprings(data){
+  function setSizeNodePerOffsprings(data) {
     var nodes = data.nodes;
-    for (var i = 0; i < nodes.length; i++){
+    for (var i = 0; i < nodes.length; i++) {
       var directChildren = tryGetChildren(nodes[i].id);
       var grandChildren = [];
-      for (var j = 0; j < directChildren.length; j++){
+      for (var j = 0; j < directChildren.length; j++) {
         grandChildren = grandChildren.concat(tryGetChildren(directChildren[j]));
       }
       // For each node, we then calculate its size. 
       // Basically its type size + size based on kids, with kids being worth more if grand kids too
-      var valueMult = (grandChildren.length >0) ? 5 : 2;
-      var nodeSize = BASE_SIZE_CHILD_NODE 
-        + BASE_SIZE_CHILD_NODE*valueMult*directChildren.length + BASE_SIZE_CHILD_NODE*grandChildren.length ;
+      var valueMult = (grandChildren.length > 0) ? 5 : 2;
+      var nodeSize = BASE_SIZE_CHILD_NODE
+        + BASE_SIZE_CHILD_NODE * valueMult * directChildren.length + BASE_SIZE_CHILD_NODE * grandChildren.length;
       nodes[i].sizeCircle = nodeSize;
     }
   }
@@ -168,9 +168,9 @@ export default function chart(id) {
         .selectAll("circle")
         .data(nodes)
         .enter().append("circle")
-        .attr("id", d=>  d.id)
+        .attr("id", d => d.id)
         .attr("class", d => d.strata)
-        .attr("fill", function(d){
+        .attr("fill", function (d) {
           if (d.strata == 0) {
             return 'red';
           } else if (d.strata == 1) {
@@ -195,10 +195,10 @@ export default function chart(id) {
         .selectAll("text")
         .data(nodes)
         .enter().append("text")
-        .text( textDisplay )
+        .text(textDisplay)
         .attr("id", addTextForIDtextNode)
         .attr("class", "textNetwork")
-        .attr("class", function (d){
+        .attr("class", function (d) {
           if (d.strata == 0) return "grandFatherText";
           if (d.strata == 1) return "fatherText";
           if (d.strata == 2) return "childText";
@@ -220,9 +220,9 @@ export default function chart(id) {
         .selectAll("line")
         .data(links)
         .enter().append("line")
-        .attr("stroke-width", linkWidthParameter )
-        .attr("idSource", d=> ( d.source) )
-        .attr("idTarget", d=> (d.target) )
+        .attr("stroke-width", linkWidthParameter)
+        .attr("idSource", d => (d.source))
+        .attr("idTarget", d => (d.target))
         ;
 
       // ---- FORCE SETUP
@@ -233,11 +233,11 @@ export default function chart(id) {
         .force('collision', forceCollide().radius(function (d) {
           return d.radius
         }))
-      ;
+        ;
 
       simulation.force("link")
         .links(data.links)
-        .strength (function (d) {
+        .strength(function (d) {
           // return Math.sqrt(d.value)
           return .05;
         })
@@ -251,29 +251,43 @@ export default function chart(id) {
       function ticked() {
         nodeCircle
           .attr("cx", function (d) {
+            // make tests for child and parent
+            var testParent = false;
+            if (idStickCenter && idStickCenter == d.id) {
+              return sw/2;
+              // child or parent of idStickCenter
+            } else if (testParent){
 
-            if (select("#" + d.id)._groups[0][0].stickCenter) console.log("I am "+d.id+" and should stick to the center")
-
-            if (d.strata == 0) {
-              return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
-            } else if (d.strata == 1 || d.strata == 2) {
-              var idParent = tryGetParent(d.id);
-              if (idParent != null) {
-                var parentCenterX = select("#" + idParent)._groups[0][0].cx.animVal.value;
-                var r = 20 / d.strata;
-                var posIndex = tryGetIndexBrothers(d.id);
-                var numBrothers = tryGetNumberOfBrothers(d.id);
-                var angleInDegrees = posIndex / numBrothers * 360;
-                var angleInRadians = angleInDegrees * (2 * Math.PI / 360);
-                var cosTheta = Math.cos(angleInRadians);
-                var sinTheta = Math.sin(angleInRadians);
-                var possible_cx = parentCenterX + cosTheta * r;
-                return possible_cx;
+            } else {
+              if (d.strata == 0) {
+                return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
+              } else if (d.strata == 1 || d.strata == 2) {
+                var idParent = tryGetParent(d.id);
+                if (idParent != null) {
+                  var parentCenterX = select("#" + idParent)._groups[0][0].cx.animVal.value;
+                  var r = 20 / d.strata;
+                  var posIndex = tryGetIndexBrothers(d.id);
+                  var numBrothers = tryGetNumberOfBrothers(d.id);
+                  var angleInDegrees = posIndex / numBrothers * 360;
+                  var angleInRadians = angleInDegrees * (2 * Math.PI / 360);
+                  var cosTheta = Math.cos(angleInRadians);
+                  var sinTheta = Math.sin(angleInRadians);
+                  var possible_cx = parentCenterX + cosTheta * r;
+                  return possible_cx;
+                }
+                return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
               }
-              return d.x = Math.max(this.r.animVal.value, Math.min(sw - this.r.animVal.value, d.x));
             }
           })
           .attr("cy", function (d) {
+            // make tests for child and parent
+            var testParent = false;
+            if (idStickCenter && idStickCenter == d.id) {
+              return sh/2;
+              // child or parent of idStickCenter
+            } else if (testParent){
+
+            } else {
             if (d.strata == 0) {
               return d.y = Math.max(this.r.animVal.value, Math.min(sh - this.r.animVal.value, d.y));
             } else if (d.strata == 1 || d.strata == 2) {
@@ -292,38 +306,39 @@ export default function chart(id) {
               }
               return d.y = Math.max(this.r.animVal.value, Math.min(sh - this.r.animVal.value, d.y));
             }
+          }            
           })
           ;
 
         link
           .attr("x1", function (d) {
-            return select("#"+(d.source.id))._groups[0][0].cx.animVal.value;
+            return select("#" + (d.source.id))._groups[0][0].cx.animVal.value;
           })
-          .attr("y1", function (d) { 
-            return select("#"+(d.source.id))._groups[0][0].cy.animVal.value;
+          .attr("y1", function (d) {
+            return select("#" + (d.source.id))._groups[0][0].cy.animVal.value;
           })
-          .attr("x2", function (d) { 
-            return select("#"+(d.target.id))._groups[0][0].cx.animVal.value;
+          .attr("x2", function (d) {
+            return select("#" + (d.target.id))._groups[0][0].cx.animVal.value;
           })
-          .attr("y2", function (d) { 
-            return select("#"+(d.target.id))._groups[0][0].cy.animVal.value;
+          .attr("y2", function (d) {
+            return select("#" + (d.target.id))._groups[0][0].cy.animVal.value;
           })
-        ;
+          ;
 
         textNode
           .transition().duration(10)
           .attr("x", function (d) {
             var circleValue = select("#" + d.id)._groups[0][0].cx.animVal.value;
             var circleWidth = select("#" + d.id)._groups[0][0].r.animVal.value;
-            var txt = (d.friendlyName) ? (d.friendlyName ) : d.id;
-            var txtLength = Number(select("#text"+d.id)._groups[0][0].textLength.baseVal.valueAsString);
-            var newX = ( circleValue + txtLength >= sw )? ( circleValue-txtLength ) : circleValue;
+            var txt = (d.friendlyName) ? (d.friendlyName) : d.id;
+            var txtLength = Number(select("#text" + d.id)._groups[0][0].textLength.baseVal.valueAsString);
+            var newX = (circleValue + txtLength >= sw) ? (circleValue - txtLength) : circleValue;
             return newX;
           })
-          .attr("y", function (d) { 
-            return select("#" +d.id)._groups[0][0].cy.animVal.value; 
+          .attr("y", function (d) {
+            return select("#" + d.id)._groups[0][0].cy.animVal.value;
           })
-        ;
+          ;
 
       }
 
