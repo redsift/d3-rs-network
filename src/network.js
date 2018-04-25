@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 
-import { event, select } from "d3-selection";
+import { event, select, selectAll } from "d3-selection";
 import { drag } from "d3-drag";
 import {
   forceSimulation,
@@ -340,7 +340,8 @@ export default function chart(id) {
         .nodes(data.nodes)
         .on("tick", ticked)
         ;
-
+      var totalParents = selectAll(".fatherText");
+      var totalChildren = selectAll(".childText");
       function ticked() {
         nodeCircle
           .attr("cx", function (d) {
@@ -431,7 +432,16 @@ export default function chart(id) {
             return newX;
           })
           .attr("y", function(d) {
-            return select("#" + d.id)._groups[0][0].cy.animVal.value;
+            switch (d.strata) {
+              case 0:
+                return d.y + d.sizeCircle + 20;
+              case 1:
+                var fextraPadding = 15 + d.index % totalParents.nodes().length * 15;
+                return Number(select("#" + d.id)._groups[0][0].cy.animVal.value) + fextraPadding;
+              case 2:
+                var cextraPadding = 10 + d.index % totalChildren.nodes().length * 15;
+                return Number(select("#" + d.id)._groups[0][0].cy.animVal.value) - cextraPadding;
+            }
           });
 
       }
