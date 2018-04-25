@@ -15,7 +15,7 @@
     "url": "https://medium.com/@rahulpowar"
   },
   "main": "distribution/d3-rs-network.umd-es2015.js",
-  "jsnext:main": "index.js",
+  "module": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/redsift/d3-rs-network.git"
@@ -33,7 +33,8 @@
     "@redsift/d3-rs-theme": "~0.4.2",
     "d3-drag": "^1.2.1",
     "d3-force": "^1.1.0",
-    "d3-selection": "^1.3.0"
+    "d3-selection": "^1.3.0",
+    "d3-transition": "^1.1.1"
   },
   "devDependencies": {
     "@redsift/tape-reel": "~0.1.0",

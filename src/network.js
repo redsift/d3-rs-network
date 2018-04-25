@@ -1,7 +1,16 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
-import { event, select } from 'd3-selection';
-import { drag, forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from 'd3-selection';
+
+import { event, select } from "d3-selection";
+import { drag } from "d3-drag";
+import {
+  forceSimulation,
+  forceLink,
+  forceManyBody,
+  forceCenter,
+  forceCollide
+} from "d3-force";
+import { transition as d3transition } from "d3-transition";
 import { html as svg } from '@redsift/d3-rs-svg';
 import { presentation10, display } from '@redsift/d3-rs-theme';
 
@@ -410,20 +419,20 @@ export default function chart(id) {
           })
           ;
 
+        var tNt = d3transition().duration(10);
         textNode
-          .transition().duration(10)
-          .attr("x", function (d) {
+          .transition(tNt)
+          .attr("x", function(d) {
             var circleValue = select("#" + d.id)._groups[0][0].cx.animVal.value;
             var circleWidth = select("#" + d.id)._groups[0][0].r.animVal.value;
-            var txt = (d.friendlyName) ? (d.friendlyName) : d.id;
+            var txt = d.friendlyName ? d.friendlyName : d.id;
             var txtLength = Number(select("#text" + d.id)._groups[0][0].textLength.baseVal.valueAsString);
-            var newX = (circleValue + txtLength >= sw) ? (circleValue - txtLength) : circleValue;
+            var newX = circleValue + txtLength >= sw ? circleValue - txtLength : circleValue;
             return newX;
           })
-          .attr("y", function (d) {
+          .attr("y", function(d) {
             return select("#" + d.id)._groups[0][0].cy.animVal.value;
-          })
-          ;
+          });
 
       }
 
