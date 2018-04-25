@@ -107,8 +107,8 @@ export default function chart(id) {
     var ratio = Math.max(...arrNormalizedParameter) / 100;
     arrNormalizedParameter = arrNormalizedParameter.map(v => Math.round(v / ratio) / 100);
     // Refeed that in the data
-    for (var i = 0; i < data.links.length; i++) {
-      data.links[i].normalizedParam = arrNormalizedParameter[i];
+    for (var k = 0; k < data.links.length; k++) {
+      data.links[k].normalizedParam = arrNormalizedParameter[k];
     }
   }
 
