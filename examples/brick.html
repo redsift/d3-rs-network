@@ -17,7 +17,7 @@
       font-size: 10px
     }
     .childText {
-      visibility: hidden;
+      visibility: visible;
       fill: red
     }
     .fatherText {
@@ -124,18 +124,18 @@
 
     let UNFRIENDLY_DATA = {
       "nodes": [
-        { "id": "s0.alpha.redsift.tech", "strata": 0 },
-        { "id": "10.112.14.96", "strata": 2 },
-        { "id": "159.8.146.158", "strata": 2 },
-        { "id": "159.8.146.111", "strata": 2 },
-        { "id": "06:50:03:46:58:81", "strata": 1 },
-        { "id": "06:d8:c7:90:c9:7a", "strata": 1 },
-        { "id": "06:d8:c7:90:c9:69", "strata": 1 },
-        { "id": "06:d8:c7:90:c9:70", "strata": 1 },
-        { "id": "06:d8:c7:90:c9:71", "strata": 1 },        
-        { "id": "8.8.8.8", "strata": 0 },
-        { "id": "1.1.1.1", "strata": 0 },
-        { "id": "4.4.4.4", "strata": 0 }
+        { "id": "s0.alpha.redsift.tech", "strata": 0, friendlyName: "s0.alpha.redsift.tech" },
+        { "id": "10.112.14.96", "strata": 2, friendlyName:"10.112.14.96"},
+        { "id": "159.8.146.158", "strata": 2, friendlyName:"159.8.146.158" },
+        { "id": "159.8.146.111", "strata": 2,friendlyName:  "159.8.146.111"},
+        { "id": "06:50:03:46:58:81", "strata": 1,friendlyName:"06:50:03:46:58:81" },
+        { "id": "06:d8:c7:90:c9:7a", "strata": 1,friendlyName:"06:d8:c7:90:c9:7a" },
+        { "id": "06:d8:c7:90:c9:69", "strata": 1,friendlyName: "06:d8:c7:90:c9:69"},
+        { "id": "06:d8:c7:90:c9:70", "strata": 1,friendlyName: "06:d8:c7:90:c9:70"},
+        { "id": "06:d8:c7:90:c9:71", "strata": 1,friendlyName: "06:d8:c7:90:c9:71"},
+        { "id": "8.8.8.8", "strata": 0,friendlyName: "8.8.8.8"},
+        { "id": "1.1.1.1", "strata": 0,friendlyName: "1.1.1.1"},
+        { "id": "4.4.4.4", "strata": 0,friendlyName: "4.4.4.4"}
       ],
       "links": [
         { "source": "10.112.14.96", "target": "8.8.8.8", "value": 38 },
@@ -266,10 +266,15 @@
     transformIDtoDOMcriteria(UNFRIENDLY_DATA); transformOrderForD3Layering(UNFRIENDLY_DATA);
 
     var chart = d3_rs_network.html('blank')
-      .category(category).tryGetChildren(tryGetChildren).tryGetParent(tryGetParent)
-      .tryGetIndexBrothers(tryGetIndexBrothers).tryGetNumberOfBrothers(tryGetNumberOfBrothers)
-      .textDisplay(textDisplay).linkWidthParameter(linkWidthParameter)
-      .addAdditionalDisplay(addAdditionalDisplay).colorLinkParameter(colorLinkParameter)
+      .category(category)
+      .tryGetChildren(tryGetChildren)
+      .tryGetParent(tryGetParent)
+      .tryGetIndexBrothers(tryGetIndexBrothers)
+      .tryGetNumberOfBrothers(tryGetNumberOfBrothers)
+      .textDisplay(textDisplay)
+      .linkWidthParameter(linkWidthParameter)
+      .addAdditionalDisplay(addAdditionalDisplay)
+      .colorLinkParameter(colorLinkParameter)
       .setStrokeOpacity(setStrokeOpacity)
     ;
 
