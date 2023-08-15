@@ -45,9 +45,9 @@ export default function chart(id) {
 
 
   let idStickCenter = null;
-  
 
-  // TODO Function to create tree structure out of the other one created 
+
+  // TODO Function to create tree structure out of the other one created
   function createTreeStructure(dataNodeLink) {
     var res = {};
     return res;
@@ -58,12 +58,12 @@ export default function chart(id) {
 
   function setCircleCenter(d) {
     var parent = tryGetParent(d.id);
-    var potentialGrandParent = tryGetParent(parent);    
+    var potentialGrandParent = tryGetParent(parent);
     console.log("parent: "); console.log(parent);
     if (idStickCenter) {
       if (idStickCenter == d.id) {
         idStickCenter = false;
-      } 
+      }
       if (parent && idStickCenter == parent) {
         idStickCenter = false;
       }
@@ -77,7 +77,7 @@ export default function chart(id) {
             idStickCenter = potentialGrandParent
           } else {
             idStickCenter = parent
-          }          
+          }
       }
     }
 
@@ -110,7 +110,7 @@ export default function chart(id) {
     var arrNormalizedParameter = [];
     for (var i = 0; i < data.links.length; i++) {
       var link = data.links[i];
-      (link.hasOwnProperty(parameter)) ? arrNormalizedParameter.push(link[parameter]) : null;
+      (Object.prototype.hasOwnProperty.call(link, parameter)) ? arrNormalizedParameter.push(link[parameter]) : null;
     }
     // Normalize
     var ratio = Math.max(...arrNormalizedParameter) / 100;
@@ -121,7 +121,7 @@ export default function chart(id) {
     }
   }
 
-  // TODO: Kind of the same as the function above, but for size of circle 
+  // TODO: Kind of the same as the function above, but for size of circle
   function setNodeSizeBasedOnParameter(parameter, data) { }
 
   function setSizeNodePerOffsprings(data) {
@@ -132,7 +132,7 @@ export default function chart(id) {
       for (var j = 0; j < directChildren.length; j++) {
         grandChildren = grandChildren.concat(tryGetChildren(directChildren[j]));
       }
-      // For each node, we then calculate its size. 
+      // For each node, we then calculate its size.
       // Basically its type size + size based on kids, with kids being worth more if grand kids too
       var valueMult = (grandChildren.length > 0) ? 3 : 2;
       var nodeSize = BASE_SIZE_CHILD_NODE
@@ -238,17 +238,17 @@ export default function chart(id) {
         })
         .on("mouseenter", function(d){
           console.log("mouseenter");
-          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "visible";          
+          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "visible";
         })
         .on("mouseover", function (d) {
           console.log("hover on d.id: "); console.log(d.id);
           console.log(select("#dynamicTextDisplay"));
           select("#dynamicTextDisplay")._groups[0][0].textContent = JSON.stringify(d);
-        })        
+        })
         .on("mouseout", function(d){
           console.log("mouseout");
           select("#dynamicTextDisplay")._groups[0][0].style.visibility = "hidden";
-        })        
+        })
         .call(drag()
           .on("start", dragstarted)
           .on("drag", dragged)
@@ -270,13 +270,13 @@ export default function chart(id) {
         })
         .on("mouseenter", function(d){
           console.log("mouseenter");
-          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "visible";          
+          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "visible";
         })
         .on("mouseover", function (d) {
           console.log("hover on d.id: "); console.log(d.id);
           console.log(select("#dynamicTextDisplay"));
           select("#dynamicTextDisplay")._groups[0][0].textContent = JSON.stringify(d);
-        })        
+        })
         .on("mouseout", function(d){
           console.log("mouseout");
           select("#dynamicTextDisplay")._groups[0][0].style.visibility = "hidden";
@@ -305,13 +305,13 @@ export default function chart(id) {
         .attr("idTarget", d => (d.target))
         .on("mouseenter", function(d){
           console.log("mouseenter");
-          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "visible";          
+          select("#dynamicTextDisplay")._groups[0][0].style.visibility = "visible";
         })
         .on("mouseover", function (d) {
           console.log("hover on d.id: "); console.log(d.id);
           console.log(select("#dynamicTextDisplay"));
           select("#dynamicTextDisplay")._groups[0][0].textContent = JSON.stringify(d);
-        })        
+        })
         .on("mouseout", function(d){
           console.log("mouseout");
           select("#dynamicTextDisplay")._groups[0][0].style.visibility = "hidden";
@@ -473,7 +473,7 @@ export default function chart(id) {
   };
 
   _impl.defaultStyle = () => `
-      ${_impl.self()} { 
+      ${_impl.self()} {
         shape-rendering: geometricprecision;
       }
     `;
@@ -543,7 +543,7 @@ export default function chart(id) {
   _impl.setStrokeOpacity = function (value) {
     return arguments.length ? (setStrokeOpacity = value, _impl) : setStrokeOpacity;
   };
-  
+
 
   return _impl;
 
